@@ -1,2 +1,2 @@
 # GridCP Proxmox Client
-Composer Library to access api proxmox
+Composer Library  SDK by Symfony to access api proxmox 
