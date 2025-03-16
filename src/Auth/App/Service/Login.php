@@ -46,12 +46,12 @@ final class Login
                 'headers' => $this->defaultHeaders,
                 'json' => (count($body) > 0 ) ? $body : null]);
            $response = $this->decodeBody($result);
-           if($result->getStatusCode()===401) throw new AuthFailedException();
+           if($result->getStatusCode()===401) return throw new AuthFailedException();
            $cookie = $this->getCookies($response['ticket'], $this->connection->getHost());
            return new LoginResponse($response['CSRFPreventionToken'], $cookie, $response['ticket']);
         } catch (GuzzleException $ex) {
-            if ($ex->getCode() === 401) throw new AuthFailedException();
-            if ($ex->getCode() === 0) throw new HostUnreachableException();
+            if ($ex->getCode() === 401) return throw new AuthFailedException();
+            if ($ex->getCode() === 0) return throw new HostUnreachableException();
         }
     }
 

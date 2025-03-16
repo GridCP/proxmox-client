@@ -20,7 +20,6 @@ final class Connection
      * @param int $port
      * @param string $username
      * @param string $password
-     * @param string $uri
      * @param string $realm
      */
     public function __construct(string $host, int $port, string $username, string $password, string $realm)

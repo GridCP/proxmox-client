@@ -12,6 +12,7 @@ use GridCP\Proxmox_Client\Commons\Application\Helpers\GFunctions;
 use GridCP\Proxmox_Client\Commons\Domain\Entities\Connection;
 use GridCP\Proxmox_Client\Commons\Domain\Entities\CookiesPVE;
 use GridCP\Proxmox_Client\Commons\Domain\Exceptions\AuthFailedException;
+use GridCP\Proxmox_Client\Commons\Domain\Exceptions\GetRequestException;
 use GridCP\Proxmox_Client\Commons\Domain\Exceptions\HostUnreachableException;
 use GridCP\Proxmox_Client\Commons\infrastructure\GClientBase;
 use GuzzleHttp\Exception\GuzzleException;
@@ -25,11 +26,17 @@ final class GetClusterStatus extends GClientBase
         parent::__construct($connection, $cookiesPVE);
     }
 
+    /**
+     * @throws GetRequestException
+     * @throws AuthFailedException
+     * @throws ClusterNotFound
+     * @throws HostUnreachableException
+     */
     public function __invoke()
     {
         try {
             $result = $this->Get("cluster/status", []);
-            if (empty($result)) throw new ClusterNotFound();
+            if (empty($result)) return throw new ClusterNotFound();
             $cluster = $result[0];
             $nodeCluster = array_slice($result, 0);
             return new ClusterResponse(
@@ -40,8 +47,8 @@ final class GetClusterStatus extends GClientBase
               new NodesClusterResponse( ...array_map($this->toResponse(),$nodeCluster))
            );
         }catch (GuzzleException $ex){
-            if ($ex->getCode() === 401) throw new AuthFailedException();
-            if ($ex->getCode() === 0) throw new HostUnreachableException();
+            if ($ex->getCode() === 401)  throw new AuthFailedException();
+            if ($ex->getCode() === 0)   throw new HostUnreachableException();
         }
 
     }
