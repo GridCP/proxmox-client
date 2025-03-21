@@ -28,7 +28,8 @@ final class IpModel
 
     public function toString():string
     {
-        if($this->GetIp()) $this->text .='ip='.$this->GetIp();
+        $this->text = '';
+        if($this->GetIp()) $this->text ='ip='.$this->GetIp();
         if($this->GetGateway()) $this->text .=',gw='.$this->GetGateway();
         return $this->text;
     }
