@@ -44,7 +44,7 @@ final class CreateVm extends  GClientBase
                                 ?string $efidiskNvme = null, ?string $efidiskEnrroled = null,
                                 ?string $tpmstateNvme = null, ?string $tpmstateVersion = null,
                                 ?string $soBuild = 'Debian12'
-                            ):?VmsResponse
+                            ):null | VmsResponse | NotFoundSOException
 
     {
         $soClass = SoVm::get($soBuild);

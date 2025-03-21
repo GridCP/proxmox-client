@@ -48,6 +48,8 @@ use GridCP\Proxmox_Client\VM\Domain\Exceptions\AgentExecVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\AgentFileWriteVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\CapbilitiesMachineException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\GetConfigVMException;
+use GridCP\Proxmox_Client\VM\Domain\Exceptions\GetStatusVMException;
+use GridCP\Proxmox_Client\VM\Domain\Exceptions\GetTaskStatusVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\PingVMDiskException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\ResizeVMDiskException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\ShutdownException;
@@ -286,7 +288,7 @@ class GClient
      * @param string|null $import
      * @return string|AuthFailedException|HostUnreachableException|ResizeVMDiskException
      */
-     public function createConfigVM(string $node, int $vmid, ?int $index, ?string $discard, ?string $cache, ?string $import): string|AuthFailedException|HostUnreachableException|ResizeVMDiskException
+     public function createConfigVM(string $node, int $vmid, ?int $index, ?string $discard, ?string $cache, ?string $import): string|AuthFailedException|HostUnreachableException|ResizeVMDiskException|GetConfigVMException
     {
         try{
             if (!isset($this->cookiesPVE)){
