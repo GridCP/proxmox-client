@@ -18,9 +18,6 @@ use GridCP\Proxmox_Client\VM\Domain\Exceptions\VmErrorCreate;
 use GridCP\Proxmox_Client\VM\Domain\Responses\VmResponse;
 use GridCP\Proxmox_Client\VM\Domain\Responses\VmsResponse;
 use GridCP\Proxmox_Client\VM\Infrastructure\Symfony\Events\CreateVMDispatcher;
-use GridCP\Proxmox_Client\VM\Infrastructure\Symfony\Events\CreateVMEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 class CreateVm extends  GClientBase
 {
 

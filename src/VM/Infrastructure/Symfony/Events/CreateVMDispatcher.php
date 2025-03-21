@@ -9,9 +9,10 @@ class CreateVMDispatcher
 
     public function __construct( private  readonly EventDispatcherInterfaceCustom $eventDispatcher){}
 
-    public function execute():void{
+    public function execute():bool{
         $createVMEvent = new CreateVMEvent("prueba");
         $this->eventDispatcher->dispatch($createVMEvent, $createVMEvent::NAME);
+        return true;
     }
 
 }
