@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace GridCP\Proxmox_Client\VM\Domain\Responses;
 
-final class VmsResponse
+class VmsResponse
 {
     private readonly array $vms;
 

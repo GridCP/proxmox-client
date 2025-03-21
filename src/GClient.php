@@ -253,7 +253,7 @@ class GClient
         ?string $vmEfiStorage = null, ?int $vmEfiKey = null,
         ?string $efidisckNvme = null, ?string $efidisckEnrroled = null,
         ?string $tpmstateNvme = null, ?string $tpmstateVersion = null,
-        ?string $soBuild = 'Deb12'
+        ?string $soBuild = 'Debian12'
       )
     {
         try {
@@ -268,7 +268,8 @@ class GClient
                             $vmMemoryBallon, $vmOsType, $vmBios, $vmMachinePc, $vmEfiStorage, $vmEfiKey, $efidisckNvme, 
                             $efidisckEnrroled, $tpmstateNvme, $tpmstateVersion, $soBuild
                          );
-           
+
+
             return $result;
         }catch (AuthFailedException $ex){
             return new AuthFailedException($ex);

@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox_Client\VM\App\Service\Help\So\Linux;
 
-use GridCP\Proxmox_Client\VM\Domain\IService\IBuildVMData;
-
 use GridCP\Proxmox_Client\Commons\Domain\Models\DiskTypePVE;
+use GridCP\Proxmox_Client\VM\Domain\IService\IBuildVMData;
 use GridCP\Proxmox_Client\VM\Domain\Model\CpuModel;
 use GridCP\Proxmox_Client\VM\Domain\Model\EfidisckModel;
 use GridCP\Proxmox_Client\VM\Domain\Model\EfiModel;
@@ -18,6 +17,7 @@ use GridCP\Proxmox_Client\VM\Domain\Model\Storage\ScsiModel;
 use GridCP\Proxmox_Client\VM\Domain\Model\Storage\VirtioModel;
 use GridCP\Proxmox_Client\VM\Domain\Model\TpmstateModel;
 use GridCP\Proxmox_Client\VM\Domain\Model\UserModel;
+
 
 final class CreateDataForLinuxVM implements IBuildVMData
 {
@@ -105,9 +105,9 @@ final class CreateDataForLinuxVM implements IBuildVMData
             $body['cipassword'] = $user->GetPassword();
         }
         
-        if (!is_null($ip->toString())) {
-            $body[ 'ipconfig'.$ip->GetIndex() ] = $ip->toString();
-        }
+       /* if (!is_null($ip->toString())) {
+        //    $body[ 'ipconfig'.$ip->GetIndex() ] = $ip->toString();
+        }*/
         
         (!is_null($this->vmCloudInitIdeId) && $this->vmCloudInitIdeId != 0)?$body['ide2']=$ide->GetDiskStorage() .':cloudinit':null;
 
