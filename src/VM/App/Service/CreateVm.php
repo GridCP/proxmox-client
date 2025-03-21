@@ -17,14 +17,18 @@ use GridCP\Proxmox_Client\VM\App\Service\Help\So\SoVm;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\VmErrorCreate;
 use GridCP\Proxmox_Client\VM\Domain\Responses\VmResponse;
 use GridCP\Proxmox_Client\VM\Domain\Responses\VmsResponse;
+use GridCP\Proxmox_Client\VM\Infrastructure\Symfony\Events\CreateVMDispatcher;
+use GridCP\Proxmox_Client\VM\Infrastructure\Symfony\Events\CreateVMEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-final class CreateVm extends  GClientBase
+class CreateVm extends  GClientBase
 {
 
     use GFunctions;
 
-
-    public function __construct(Connection $connection, CookiesPVE $cookiesPVE)
+    public function __construct(Connection $connection,
+                                CookiesPVE $cookiesPVE,
+                                private readonly  CreateVMDispatcher $eventDispatcher)
     {
         parent::__construct($connection, $cookiesPVE);
     }
@@ -44,7 +48,7 @@ final class CreateVm extends  GClientBase
                                 ?string $efidiskNvme = null, ?string $efidiskEnrroled = null,
                                 ?string $tpmstateNvme = null, ?string $tpmstateVersion = null,
                                 ?string $soBuild = 'Debian12'
-                            ):?VmsResponse
+                            ): VmsResponse
 
     {
         $soClass = SoVm::get($soBuild);
@@ -71,9 +75,9 @@ final class CreateVm extends  GClientBase
             try {
                 $result = $this->Post("nodes/".$nodeName."/qemu/", $body);
                 $getContent = json_decode($result->getBody()->getContents());
-
                 $vmResponses = array_map($this->toResponse(), (array)$getContent);
                 $vmResponsesNumeric = array_values($vmResponses);
+                $this->eventDispatcher->execute();
                 return new VmsResponse(...$vmResponsesNumeric);
 
             }catch (PostRequestException $e ){

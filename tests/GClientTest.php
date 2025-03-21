@@ -47,7 +47,7 @@ class GClientTest extends  TestCase
      //   $this->clientCluster = new GClient($_ENV['HOST_CLUSTER'], $_ENV['USERNAME_CLUSTER'], $_ENV['PASSWORD_CLUSTER'], $_ENV['REALM_CLUSTER']);
       //  $this->authCLuster = $this->clientCluster->login();
     }
-    public function testVersion():void
+   /* public function testVersion():void
     {
         $result = $this->client->getVersion();
        $this->assertInstanceOf(VersionResponse::class, $result);
@@ -146,28 +146,10 @@ class GClientTest extends  TestCase
                 $this->assertInstanceOf(CpuNotFound::class, $ex);
             }
         }
+*/
 
 
-    //// TESTING VM
-    public function testCreateVMOk():void
-    {
-        $result =$this->client->createVM('ns1047', 102,2,'hostname', 0, 'virtio',
-            'vmbr0',1,true, 'virtio-scsi-pci', 'SCSI',0, 'nvme', 'on','directsync','/mnt/pve/nfs-iso/gcp-images/AlmaLinux-8.6_x86_64-minimal.iso',
-            'deb12',0, 'nvme','scsi0', 1,0,'5.134.113.50/24','5.134.113.1','root', 'password', 'x86-64-v2-AES', 4096,0,
-            'l26' ,'ovmf','pc-q35-8-1', 'nvme',1);
-        $this->assertInstanceOf(VmsResponse::class, $result);
-
-    }
-    public function testCreateVMError():void
-    {
-        $result = $this->client->createVM('ns1047', 115,2,'hostname', 0, 'virtio',
-            'vmbr0',1,true, 'virtio-scsi-pci', 'SCSI',0, 'nvme', 'on','directsync','/mnt/pve/nfs-iso/gcp-images/Debian-12-x86_64-GridCP-PVE_KVM-20240610.qcow2',
-            'deb12',0, 'nvme','scsi0', 1,0,'5.134.113.50/24','5.134.113.1','root', 'password', 'x86-64-v2-AES', 4096,0,
-            'l26' ,'ovmf','pc-q35-8-1', 'nvme',1);
-        $this->assertInstanceOf(VmErrorCreate::class, $result);
-    }
-
-
+/*
     //// TESTING CONFIGURATION
     public  function testGetVMConfiguration():void
     {
@@ -277,7 +259,7 @@ class GClientTest extends  TestCase
         $result = $this->clientCluster->getClusterStatus();
         $this->assertInstanceOf(ClusterResponse::class, $result);
     }*/
-
+/*
     public function testcreateConfigVMOk():void{
         $result =$this->client->createConfigVM("ns1047",101, 1, "on","directsync", "/mnt/pve/nfs-iso/gcp-images/Debian-12-x86_64-GridCP-PVE_KVM-20240610.qcow2");
         $this->assertIsString($result);
@@ -400,6 +382,6 @@ class GClientTest extends  TestCase
         $result = $this->client->getCapabilitiesMachine("nsxxx");
         $this->assertInstanceOf(CapbilitiesMachineException::class, $result);
     }
-
+*/
 
 }

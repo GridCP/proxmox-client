@@ -4,6 +4,11 @@ declare(strict_types=1);
 namespace GridCP\Proxmox_Client\VM\App\Service\Help\So;
 
 
+use GridCP\Proxmox_Client\Commons\Domain\Exceptions\NotFoundSOException;
+use GridCP\Proxmox_Client\VM\App\Service\Help\So\Linux\CreateDataForLinuxVM;
+use GridCP\Proxmox_Client\VM\App\Service\Help\So\Windows\CreateDataWindows11VM;
+use GridCP\Proxmox_Client\VM\Domain\Contants\SoConst;
+
 class SoVm
 {
     const SO = [
