@@ -8,8 +8,8 @@ class SoConst
     const LINUX = 'Linux';
     const WINDOWS = 'Windows';
 
-    const ROUTEROS6 = 'RouterOS6';
-    const ROUTEROS7 = 'RouterOS7';
+    const ROUTEROS6 = 'Routeros6';
+    const ROUTEROS7 = 'Routeros7';
     const UBUNTU24 = 'Ubuntu24';
     const UBUNTU22 = 'Ubuntu22';
     const UBUNTU20 = 'Ubuntu20';
@@ -18,8 +18,8 @@ class SoConst
     const DEBIAN10 = 'Debian10';
     const DEBIAN11 = 'Debian11';
     const DEBIAN12 = 'Debian12';
-    const ALMA8 = 'AlmaLinux8';
-    const ALMA9 = 'AlmaLinux9';
+    const ALMA8 = 'Alma8';
+    const ALMA9 = 'Alma9';
     const CENTOS7 = 'CentOS7';
     const WINDOWS11 = 'Windows11';
     const WINDOWS_11 = 'windows11';
