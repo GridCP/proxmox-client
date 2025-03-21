@@ -4,11 +4,26 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox_Client\VM\App\Service\Help\So\Windows;
 
+use GridCP\Proxmox_Client\Commons\Domain\Models\DiskTypePVE;
+use GridCP\Proxmox_Client\VM\Domain\IService\IBuildVMData;
+use GridCP\Proxmox_Client\VM\Domain\Model\CpuModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\EfidisckModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\EfiModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\IpModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\MachineModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\NetModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\Storage\IdeModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\Storage\SataModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\Storage\ScsiModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\Storage\VirtioModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\TpmstateModel;
+use GridCP\Proxmox_Client\VM\Domain\Model\UserModel;
+
 
 
 
 use GridCP\Proxmox_Client\Commons\Application\Helpers\GFunctions;
-use GridCP\Proxmox_Client\VM\Domain\IService\IBuildVMData;
+
 
 final class CreateDataWindows11VM implements IBuildVMData
 
