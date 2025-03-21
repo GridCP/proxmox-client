@@ -20,7 +20,7 @@ class SoConst
     const DEBIAN12 = 'Debian12';
     const ALMA8 = 'Alma8';
     const ALMA9 = 'Alma9';
-    const CENTOS7 = 'CentOS7';
+    const CENTOS7 = 'Centos7';
     const WINDOWS11 = 'Windows11';
     const WINDOWS_11 = 'windows11';
 }
