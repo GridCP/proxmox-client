@@ -25,7 +25,7 @@ class CreateVm extends  GClientBase
 
     public function __construct(Connection $connection,
                                 CookiesPVE $cookiesPVE,
-                                private readonly  CreateVMDispatcher $eventDispatcher)
+                                private readonly  ?CreateVMDispatcher $eventDispatcher = null)
     {
         parent::__construct($connection, $cookiesPVE);
     }
@@ -74,7 +74,7 @@ class CreateVm extends  GClientBase
                 $getContent = json_decode($result->getBody()->getContents());
                 $vmResponses = array_map($this->toResponse(), (array)$getContent);
                 $vmResponsesNumeric = array_values($vmResponses);
-                $this->eventDispatcher->execute();
+                $this->eventDispatcher ? $this->eventDispatcher->execute() : null;
                 return new VmsResponse(...$vmResponsesNumeric);
 
             }catch (PostRequestException $e ){
