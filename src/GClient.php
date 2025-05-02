@@ -101,7 +101,7 @@ class GClient
     {
         try {
 
-            $auth = new Login($this->connection, null);
+            $auth = new Login($this->connection);
             $result = $auth();
             if (is_null($result->getCookies()))  return new AuthFailedException();
             $this->cookiesPVE = new CookiesPVE($result->getCSRFPreventionToken(), $result->getCookies(), $result->getTicket());
@@ -272,9 +272,9 @@ class GClient
 
             return $result;
         }catch (AuthFailedException $ex){
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         }catch (VmErrorCreate $ex){
             return new VmErrorCreate($ex->getMessage());
         }
@@ -298,9 +298,9 @@ class GClient
             $configVM = new CreateConfigVMinNode($this->connection, $this->cookiesPVE);
             return $configVM($node,$vmid,0, $discard, $cache,$import);
         }catch (AuthFailedException $ex){
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         }catch (GetConfigVMException $ex){
             return new GetConfigVMException($ex->getMessage());
         }
@@ -310,7 +310,7 @@ class GClient
      * @param string $node
      * @param int $vmid
      * @param array $command
-     * @return array|AuthFailedException|null
+     * @return array|AuthFailedException|AgentExecVMException|null
      */
     public function setAgentExecVM(string $node, int $vmid, array $command = [])
     {
@@ -325,7 +325,7 @@ class GClient
 
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch (AgentExecVMException $ex){
             return new AgentExecVMException($ex->getMessage());
         }
@@ -336,7 +336,7 @@ class GClient
      * @param string $node
      * @param int $vmid
      * @param array $command
-     * @return array|AuthFailedException|null
+     * @return array|AuthFailedException|AgentFileWriteVMException|null
      */
     public function agentFileWriteVM(string $node, int $vmid, array $command = [])
     {
@@ -350,7 +350,7 @@ class GClient
             return  $getConfigVM($node, $vmid, $command);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch (AgentFileWriteVMException $ex){
             return new AgentFileWriteVMException($ex->getMessage());
         }
@@ -361,7 +361,7 @@ class GClient
      * @param string $node
      * @param int $vmid
      * @param array $command
-     * @return array|AuthFailedException|null
+     * @return array|AuthFailedException|AgentExecStatusVMException|null
      */
 
     public function agentExecStatusVM(string $node, int $vmid, string $pid)
@@ -374,7 +374,7 @@ class GClient
             return  $status($node, $vmid, $pid);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch (AgentExecStatusVMException $ex){
             return new AgentExecStatusVMException($ex->getMessage());
         }
@@ -383,7 +383,7 @@ class GClient
     /**
      * @param string $node
      * @param int $vmid
-     * @return array|AuthFailedException|null
+     * @return array|AuthFailedException|PingVMDiskException|null
      */
     public function pingVM(string $node, int $vmid)
     {
@@ -397,7 +397,7 @@ class GClient
             return  $pingVM($node, $vmid);
 
         }catch(AuthFailedException $ex) {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch (PingVMDiskException $ex){
             return new PingVMDiskException($ex->getMessage());
         }
@@ -405,7 +405,7 @@ class GClient
 
     /**
      * @param string $upid
-     * @return array|AuthFailedException|null
+     * @return array|AuthFailedException|GetTaskStatusVMException|null
      */
 
     public function getTaskStatusVM(string $node, string $upid)
@@ -419,7 +419,7 @@ class GClient
             return  $taskStatusVM($node, $upid);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch (GetTaskStatusVMException $ex){
             return new GetTaskStatusVMException($ex->getMessage());
         }
@@ -430,7 +430,7 @@ class GClient
     /**
      * @param string $node
      * @param int $vmid
-     * @return array|AuthFailedException|null
+     * @return array|AuthFailedException|GetConfigVMException|null
      */
     public function setConfigVM(string $node, int $vmid, array $params = [])
     {
@@ -442,7 +442,7 @@ class GClient
             return  $getConfigVM($node, $vmid, $params);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         } catch (GetConfigVMException $ex){
             return new GetConfigVMException($ex->getMessage());
         }
@@ -451,7 +451,7 @@ class GClient
     /**
      * @param string $node
      * @param int $vmid
-     * @return array|AuthFailedException|null
+     * @return array|AuthFailedException|GetStatusVMException|null
      */
     public function getStatusVM(string $node, int $vmid, bool $current = false)
     {
@@ -464,7 +464,7 @@ class GClient
             return  $getStatusVM($node, $vmid, $current);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         } catch (GetStatusVMException $ex){
             return new GetStatusVMException($ex->getMessage());
         }
@@ -485,9 +485,9 @@ class GClient
             return  $getConfigVM($node, $vmId);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         }catch (VmErrorStart $ex){
             return new VmErrorStart($ex->getMessage());
         }
@@ -509,9 +509,9 @@ class GClient
             return  $getConfigVM($node, $vmId);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         }catch (VmErrorStart $ex){
             return new VmErrorStop($ex->getMessage());
         }
@@ -532,9 +532,9 @@ class GClient
             return  $deleteVMinNode($node, $vmId);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         } catch (VmErrorDestroy $ex) {
             return new VmErrorDestroy($ex->getMessage());
         }
@@ -557,9 +557,9 @@ class GClient
 
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         } catch (ShutdownException $ex) {
             return new ShutdownException($ex->getMessage());
         }
@@ -582,9 +582,9 @@ class GClient
             return  $reset($node, $vmId);
         }catch(AuthFailedException $ex)
         {
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         } catch (VmErrorReset $ex) {
             return new VmErrorReset($ex->getMessage());
         }
@@ -607,9 +607,9 @@ class GClient
             $resizeVMDisk = new ResizeVMDisk($this->connection, $this->cookiesPVE);
             return $resizeVMDisk($node, $vmid,$disk,$size);
         }catch (AuthFailedException $ex){
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         }catch (ResizeVMDiskException $ex){
             return new ResizeVMDiskException($ex->getMessage());
         }
@@ -628,9 +628,9 @@ class GClient
             $version = new GetVersionFromNode($this->connection,$this->cookiesPVE);
             return  $version();
         }catch(AuthFailedException $ex){
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex){
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         }catch(VersionError $ex){
             return new VersionError($ex->getMessage());
 
@@ -655,9 +655,9 @@ class GClient
             return  $typeMachine($node);
 
         }catch(AuthFailedException $ex){
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         }catch(HostUnreachableException $ex){
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         }catch(CapbilitiesMachineException $ex){
             return new CapbilitiesMachineException($ex->getMessage());
         }
@@ -677,9 +677,9 @@ class GClient
             return $status();
 
         }catch (AuthFailedException $ex){
-            return new AuthFailedException($ex);
+            return new AuthFailedException();
         } catch (HostUnreachableException $ex) {
-            return new HostUnreachableException($ex);
+            return new HostUnreachableException();
         }catch (ClusterNotFound $ex)
         {
             return new ClusterNotFound();
