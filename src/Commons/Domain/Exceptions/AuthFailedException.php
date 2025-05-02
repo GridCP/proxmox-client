@@ -5,8 +5,8 @@ namespace GridCP\Proxmox_Client\Commons\Domain\Exceptions;
 final class AuthFailedException extends \Exception
 {
 
-    public function __construct()
+    public function __construct( string $message = "Auth failed!!!")
     {
-        parent::__construct("Auth Failed", 401);
+        parent::__construct($message, 401);
     }
 }
