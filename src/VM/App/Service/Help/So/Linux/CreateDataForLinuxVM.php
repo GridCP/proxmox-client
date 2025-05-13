@@ -87,6 +87,7 @@ final class CreateDataForLinuxVM implements IBuildVMData
             'agent' => 'enabled='.$this->vmAgent,
             'scsihw'=>$this->vmScsiHw,
             'net'.$net->GetIndex() =>$net->toString(),
+            'ipconfig'.$ip->GetIndex() => $ip->toString(),
             'tags' => $this->vmTags,
             'boot'=>'order='.$this->vmBootOrder,
             'cpu' =>$cpu->getCpuTypes(),
