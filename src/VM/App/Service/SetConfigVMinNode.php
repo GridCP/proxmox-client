@@ -29,7 +29,7 @@ class SetConfigVMinNode extends GClientBase
 
     {
         $body = [];
-        $keys_to_check = ['keyboard', 'localtime', 'memory', 'name', 'machine', 'onboot', 'ostype', 'bios'];
+        $keys_to_check = ['keyboard', 'localtime', 'memory', 'name', 'machine', 'onboot', 'ostype', 'bios', 'ipconfig0','ciuser', 'cipassword'];
         $filtered_params = array_intersect_key($params, array_flip($keys_to_check));
         $body = array_merge($body, $filtered_params);
         try{
