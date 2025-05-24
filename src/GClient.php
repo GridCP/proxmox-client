@@ -50,6 +50,7 @@ use GridCP\Proxmox_Client\VM\Domain\Exceptions\CapbilitiesMachineException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\GetConfigVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\GetStatusVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\GetTaskStatusVMException;
+use GridCP\Proxmox_Client\VM\Domain\Exceptions\MoveDiskVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\PingVMDiskException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\ResizeVMDiskException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\ShutdownException;
@@ -422,6 +423,32 @@ class GClient
             return new AuthFailedException();
         }catch (GetTaskStatusVMException $ex){
             return new GetTaskStatusVMException($ex->getMessage());
+        }
+    }
+    
+
+    /**
+     * @param string $node
+     * @param int $upid
+     * @param string $disk
+     * @param string $storage
+     * @return array|AuthFailedException|MoveDiskVMException|null
+     */
+
+    public function moveDisk(string $node, int $vmid, string $disk, string $storage)
+    {
+        try{
+            if (!isset($this->cookiesPVE)){
+                return new AuthFailedException("Auth failed!!!");
+            };
+
+            $moveDisk =new GetTaskStatusVmNode($this->connection, $this->cookiesPVE);
+            return  $moveDisk($node, $vmid, $disk, $storage);
+        }catch(AuthFailedException $ex)
+        {
+            return new AuthFailedException();
+        }catch (MoveDiskVMException $ex){
+            return new MoveDiskVMException($ex->getMessage());
         }
     }
 
