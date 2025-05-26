@@ -34,6 +34,7 @@ use GridCP\Proxmox_Client\VM\App\Service\CreateVncWebSocket;
 use GridCP\Proxmox_Client\VM\App\Service\DeleteVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\GetStatusVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\GetTaskStatusVmNode;
+use GridCP\Proxmox_Client\VM\App\Service\MoveDiskVM;
 use GridCP\Proxmox_Client\VM\App\Service\PingVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\ResetVMNode;
 use GridCP\Proxmox_Client\VM\App\Service\ResizeVMDisk;
@@ -442,7 +443,7 @@ class GClient
                 return new AuthFailedException("Auth failed!!!");
             };
 
-            $moveDisk =new GetTaskStatusVmNode($this->connection, $this->cookiesPVE);
+            $moveDisk =new MoveDiskVM($this->connection, $this->cookiesPVE);
             return  $moveDisk($node, $vmid, $disk, $storage);
         }catch(AuthFailedException $ex)
         {
