@@ -32,6 +32,7 @@ use GridCP\Proxmox_Client\VM\App\Service\CreateVm;
 use GridCP\Proxmox_Client\VM\App\Service\CreateVncProxy;
 use GridCP\Proxmox_Client\VM\App\Service\CreateVncWebSocket;
 use GridCP\Proxmox_Client\VM\App\Service\DeleteVMinNode;
+use GridCP\Proxmox_Client\VM\App\Service\GetConfigVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\GetStatusVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\GetTaskStatusVmNode;
 use GridCP\Proxmox_Client\VM\App\Service\MoveDiskVM;
@@ -467,6 +468,27 @@ class GClient
                 return new AuthFailedException("Auth failed!!!");
             };
             $getConfigVM =new SetConfigVMinNode($this->connection, $this->cookiesPVE);
+            return  $getConfigVM($node, $vmid, $params);
+        }catch(AuthFailedException $ex)
+        {
+            return new AuthFailedException();
+        } catch (GetConfigVMException $ex){
+            return new GetConfigVMException($ex->getMessage());
+        }
+    }
+
+    /**
+     * @param string $node
+     * @param int $vmid
+     * @return array|AuthFailedException|GetConfigVMException|null
+     */
+    public function getConfigVM(string $node, int $vmid, array $params = [])
+    {
+        try{
+            if (!isset($this->cookiesPVE)){
+                return new AuthFailedException("Auth failed!!!");
+            };
+            $getConfigVM =new GetConfigVMinNode($this->connection, $this->cookiesPVE);
             return  $getConfigVM($node, $vmid, $params);
         }catch(AuthFailedException $ex)
         {
