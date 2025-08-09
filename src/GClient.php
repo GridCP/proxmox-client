@@ -14,6 +14,8 @@ use GridCP\Proxmox_Client\Commons\Domain\Exceptions\HostUnreachableException;
 use GridCP\Proxmox_Client\Cpus\App\Service\GetCpuFromNode;
 use GridCP\Proxmox_Client\Cpus\Domain\Exceptions\CpuNotFound;
 use GridCP\Proxmox_Client\Cpus\Domain\Reponses\CpusResponse;
+use GridCP\Proxmox_Client\Currrent\App\Service\GetCurrrentFromNode;
+use GridCP\Proxmox_Client\Currrent\Domain\Exceptions\CurrrentNotFound;
 use GridCP\Proxmox_Client\Networks\App\Service\GetNetworksFromNode;
 use GridCP\Proxmox_Client\Networks\Domain\Exceptions\NetworksNotFound;
 use GridCP\Proxmox_Client\Networks\Domain\Responses\NetworksResponse;
@@ -199,6 +201,26 @@ class GClient
 
     }
 
+    /**
+     * @param string $node
+     */
+    public function GetCurrrentFromNode(string $node, string $vmid)
+    {
+        try {
+            if (!isset($this->cookiesPVE)){
+                return new AuthFailedException("Auth failed!!!");
+            };
+            $current = new GetCurrrentFromNode($this->connection, $this->cookiesPVE);
+            return $current($node, $vmid);
+        }catch (AuthFailedException $ex){
+            return new AuthFailedException();
+        }catch(HostUnreachableException $ex){
+            return new HostUnreachableException();
+        }catch(CurrrentNotFound $ex){
+            return  new CurrrentNotFound();
+        }
+
+    }
     /**
      * @param string $nodeName
      * @param int $vmId
