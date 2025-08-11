@@ -14,6 +14,8 @@ use GridCP\Proxmox_Client\Commons\Domain\Exceptions\HostUnreachableException;
 use GridCP\Proxmox_Client\Cpus\App\Service\GetCpuFromNode;
 use GridCP\Proxmox_Client\Cpus\Domain\Exceptions\CpuNotFound;
 use GridCP\Proxmox_Client\Cpus\Domain\Reponses\CpusResponse;
+use GridCP\Proxmox_Client\Currrent\App\Service\GetCurrrentFromNode;
+use GridCP\Proxmox_Client\Currrent\Domain\Exceptions\CurrrentNotFound;
 use GridCP\Proxmox_Client\Networks\App\Service\GetNetworksFromNode;
 use GridCP\Proxmox_Client\Networks\Domain\Exceptions\NetworksNotFound;
 use GridCP\Proxmox_Client\Networks\Domain\Responses\NetworksResponse;
@@ -22,6 +24,7 @@ use GridCP\Proxmox_Client\Nodes\Domain\Responses\NodesResponse;
 use GridCP\Proxmox_Client\Proxmox\Version\App\Service\GetVersionFromNode;
 use GridCP\Proxmox_Client\Proxmox\Version\Domain\Exceptions\VersionError;
 use GridCP\Proxmox_Client\Proxmox\Version\Domain\Responses\VersionResponse;
+use GridCP\Proxmox_Client\Reboot\App\Service\GetRebootFromNode;
 use GridCP\Proxmox_Client\Storages\App\Service\GetStoragesFromNode;
 use GridCP\Proxmox_Client\Storages\Domain\Exceptions\StoragesNotFound;
 use GridCP\Proxmox_Client\Storages\Domain\Responses\StoragesResponse;
@@ -198,6 +201,50 @@ class GClient
         }
 
     }
+
+    /**
+     * @param string $node
+     */
+    public function GetCurrrentFromNode(string $node, string $vmid)
+    {
+        try {
+            if (!isset($this->cookiesPVE)){
+                return new AuthFailedException("Auth failed!!!");
+            };
+            $current = new GetCurrrentFromNode($this->connection, $this->cookiesPVE);
+            return $current($node, $vmid);
+        }catch (AuthFailedException $ex){
+            return new AuthFailedException();
+        }catch(HostUnreachableException $ex){
+            return new HostUnreachableException();
+        }catch(CurrrentNotFound $ex){
+            return  new CurrrentNotFound();
+        }
+
+    }
+    /**
+     * @param string $node
+     */
+    public function GetRebootFromNode(string $node, string $vmid)
+    {
+        try {
+            if (!isset($this->cookiesPVE)){
+                return new AuthFailedException("Auth failed!!!");
+            };
+            $current = new GetRebootFromNode($this->connection, $this->cookiesPVE);
+            return $current($node, $vmid);
+        }catch (AuthFailedException $ex){
+            return new AuthFailedException();
+        }catch(HostUnreachableException $ex){
+            return new HostUnreachableException();
+        }catch(CurrrentNotFound $ex){
+            return  new CurrrentNotFound();
+        }
+
+    }
+
+
+
 
     /**
      * @param string $nodeName
@@ -557,6 +604,54 @@ class GClient
             };
             $getConfigVM =new StopVMinNode($this->connection, $this->cookiesPVE);
             return  $getConfigVM($node, $vmId);
+        }catch(AuthFailedException $ex)
+        {
+            return new AuthFailedException();
+        }catch(HostUnreachableException $ex) {
+            return new HostUnreachableException();
+        }catch (VmErrorStart $ex){
+            return new VmErrorStop($ex->getMessage());
+        }
+    }
+
+    /**
+     * @param string $node
+     * @param int $vmId
+     * @return string|AuthFailedException|HostUnreachableException|VmErrorStop
+     * @throws VmErrorStop
+     */
+    public function resumeVM(string $node, int $vmId, ?bool $nocheck = null, ?string $skiplock = null):string|AuthFailedException|HostUnreachableException|VmErrorStop
+    {
+        try{
+            if (!isset($this->cookiesPVE)){
+                return new AuthFailedException("Auth failed!!!");
+            };
+            $getConfigVM =new ResumeVMinNode($this->connection, $this->cookiesPVE);
+            return  $getConfigVM($node, $vmId, $nocheck, $skiplock );
+        }catch(AuthFailedException $ex)
+        {
+            return new AuthFailedException();
+        }catch(HostUnreachableException $ex) {
+            return new HostUnreachableException();
+        }catch (VmErrorStart $ex){
+            return new VmErrorStop($ex->getMessage());
+        }
+    }
+
+    /**
+     * @param string $node
+     * @param int $vmId
+     * @return string|AuthFailedException|HostUnreachableException|VmErrorStop
+     * @throws VmErrorStop
+     */
+    public function suspendVM(string $node, int $vmId, ?bool $skiplock = null, ?string $statestorage = null, ?bool $todisk = null):string|AuthFailedException|HostUnreachableException|VmErrorStop
+    {
+        try{
+            if (!isset($this->cookiesPVE)){
+                return new AuthFailedException("Auth failed!!!");
+            };
+            $getConfigVM =new SuspendVMinNode($this->connection, $this->cookiesPVE);
+            return  $getConfigVM($node, $vmId, $skiplock, $statestorage, $todisk );
         }catch(AuthFailedException $ex)
         {
             return new AuthFailedException();
