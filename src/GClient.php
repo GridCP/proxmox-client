@@ -686,28 +686,18 @@ class GClient
     }
 
     /**
-     * @param string $node
-     * @param int $vmId
-     * @return string|AuthFailedException|HostUnreachableException|VmErrorDestroy
+     * @throws ShutdownException
+     * @throws HostUnreachableException
+     * @throws AuthFailedException
      */
-    public function shutdown(string $node, int $vmId)
+    public function shutdown(string $node, int $vmId): string
     {
-        try{
-            if (!isset($this->cookiesPVE)){
-                return new AuthFailedException("Auth failed!!!");
-            };
-            $shutdown =new ShutdownVMNode($this->connection, $this->cookiesPVE);
-
-            return  $shutdown($node, $vmId);
-
-        }catch(AuthFailedException $ex)
-        {
-            return new AuthFailedException();
-        }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException();
-        } catch (ShutdownException $ex) {
-            return new ShutdownException($ex->getMessage());
+        if (!isset($this->cookiesPVE)) {
+            throw new AuthFailedException('Auth failed: missing cookies.');
         }
+        $shutdown = new ShutdownVMNode($this->connection, $this->cookiesPVE);
+
+        return $shutdown->__invoke($node, $vmId);
     }
 
     /**
