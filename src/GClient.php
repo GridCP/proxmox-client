@@ -568,26 +568,18 @@ class GClient
     }
 
     /**
-     * @param string $node
-     * @param int $vmid
-     * @return string|AuthFailedException|HostUnreachableException|VmErrorStart
+     * @throws VmErrorStart
+     * @throws HostUnreachableException
+     * @throws AuthFailedException
      */
-     public function startVM(string $node, int $vmId):string|AuthFailedException|HostUnreachableException|VmErrorStart
+    public function start(string $node, int $vmId): string
     {
-        try{
-            if (!isset($this->cookiesPVE)){
-                return new AuthFailedException("Auth failed!!!");
-            };
-            $getConfigVM =new StartVMinNode($this->connection, $this->cookiesPVE);
-            return  $getConfigVM($node, $vmId);
-        }catch(AuthFailedException $ex)
-        {
-            return new AuthFailedException();
-        }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException();
-        }catch (VmErrorStart $ex){
-            return new VmErrorStart($ex->getMessage());
+        if (!isset($this->cookiesPVE)) {
+            throw new AuthFailedException('Auth failed: missing cookies.');
         }
+        $start = new StartVMinNode($this->connection, $this->cookiesPVE);
+
+        return $start->__invoke($node, $vmId);
     }
 
     /**

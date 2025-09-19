@@ -1,6 +1,6 @@
 {
-    "name": "gridcp/proxmox_client",
-    "description": "Client for Api Proxmox",
+    "name": "gridcp/proxmox-client",
+    "description": "HTTP client for the Proxmox VE API",
     "type": "library",
     "license": "mit",
     "autoload": {
