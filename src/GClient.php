@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace GridCP\Proxmox_Client;
 
 use GridCP\Proxmox_Client\Auth\App\Service\Login;
@@ -48,6 +50,7 @@ use GridCP\Proxmox_Client\VM\App\Service\SetConfigVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\ShutdownVMNode;
 use GridCP\Proxmox_Client\VM\App\Service\StartVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\StopVMinNode;
+use GridCP\Proxmox_Client\VM\App\Service\StopVM;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\AgentExecStatusVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\AgentExecVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\AgentFileWriteVMException;
@@ -69,36 +72,15 @@ use GridCP\Proxmox_Client\VM\Domain\Exceptions\VncWebSocketError;
 use GridCP\Proxmox_Client\VM\Domain\Responses\VmsResponse;
 use GridCP\Proxmox_Client\VM\Domain\Responses\VncResponse;
 
-/**
- *
- */
 class GClient
 {
-    /**
-     * @var Connection
-     */
     private Connection $connection;
-    /**
-     * @var string
-     */
-    private string $CSRFPreventionToken;
-    /**
-     * @var CookiesPVE
-     */
     private CookiesPVE $cookiesPVE;
 
-    /**
-     * @param $hostname
-     * @param $username
-     * @param $password
-     * @param $realm
-     * @param $port
-     */
     public function __construct($hostname, $username, $password, $realm, $port = 8006)
     {
-        $this->connection =  new Connection($hostname, $port, $username, $password, $realm);
+        $this->connection = new Connection($hostname, $port, $username, $password, $realm);
     }
-
 
     /**
      * @return LoginResponse|AuthFailedException|HostUnreachableException
@@ -583,27 +565,18 @@ class GClient
     }
 
     /**
-     * @param string $node
-     * @param int $vmId
-     * @return string|AuthFailedException|HostUnreachableException|VmErrorStop
      * @throws VmErrorStop
+     * @throws HostUnreachableException
+     * @throws AuthFailedException
      */
-    public function stopVM(string $node, int $vmId):string|AuthFailedException|HostUnreachableException|VmErrorStop
+    public function stop(string $node, int $vmId): string
     {
-        try{
-            if (!isset($this->cookiesPVE)){
-                return new AuthFailedException("Auth failed!!!");
-            };
-            $getConfigVM =new StopVMinNode($this->connection, $this->cookiesPVE);
-            return  $getConfigVM($node, $vmId);
-        }catch(AuthFailedException $ex)
-        {
-            return new AuthFailedException();
-        }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException();
-        }catch (VmErrorStart $ex){
-            return new VmErrorStop($ex->getMessage());
+        if (!isset($this->cookiesPVE)) {
+            throw new AuthFailedException('Auth failed: missing cookies.');
         }
+        $stop = new StopVM($this->connection, $this->cookiesPVE);
+
+        return $stop->__invoke($node, $vmId);
     }
 
     /**
