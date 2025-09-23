@@ -42,6 +42,7 @@ use GridCP\Proxmox_Client\VM\App\Service\GetStatusVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\GetTaskStatusVmNode;
 use GridCP\Proxmox_Client\VM\App\Service\MoveDiskVM;
 use GridCP\Proxmox_Client\VM\App\Service\PingVMinNode;
+use GridCP\Proxmox_Client\VM\App\Service\RebootVM;
 use GridCP\Proxmox_Client\VM\App\Service\ResetVMNode;
 use GridCP\Proxmox_Client\VM\App\Service\ResizeVMDisk;
 use GridCP\Proxmox_Client\VM\App\Service\SetAgentExecVMinNode;
@@ -204,26 +205,20 @@ class GClient
             return  new CurrrentNotFound();
         }
 
-    }
     /**
-     * @param string $node
+     * @throws RebootNotFound
+     * @throws HostUnreachableException
+     * @throws AuthFailedException
      */
-    public function GetRebootFromNode(string $node, string $vmid)
+    public function reboot(string $node, int $vmid): ?string
     {
-        try {
-            if (!isset($this->cookiesPVE)){
-                return new AuthFailedException("Auth failed!!!");
-            };
-            $current = new GetRebootFromNode($this->connection, $this->cookiesPVE);
-            return $current($node, $vmid);
-        }catch (AuthFailedException $ex){
-            return new AuthFailedException();
-        }catch(HostUnreachableException $ex){
-            return new HostUnreachableException();
-        }catch(CurrrentNotFound $ex){
-            return  new CurrrentNotFound();
+        if (!isset($this->cookiesPVE)) {
+            throw new AuthFailedException('Auth failed: missing cookies.');
         }
 
+        $reboot = new RebootVM($this->connection, $this->cookiesPVE);
+
+        return $reboot->__invoke($node, $vmid);
     }
 
 
