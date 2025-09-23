@@ -51,6 +51,7 @@ use GridCP\Proxmox_Client\VM\App\Service\ShutdownVMNode;
 use GridCP\Proxmox_Client\VM\App\Service\StartVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\StopVMinNode;
 use GridCP\Proxmox_Client\VM\App\Service\StopVM;
+use GridCP\Proxmox_Client\VM\App\Service\SuspendVM;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\AgentExecStatusVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\AgentExecVMException;
 use GridCP\Proxmox_Client\VM\Domain\Exceptions\AgentFileWriteVMException;
@@ -609,22 +610,20 @@ class GClient
      * @return string|AuthFailedException|HostUnreachableException|VmErrorStop
      * @throws VmErrorStop
      */
-    public function suspendVM(string $node, int $vmId, ?bool $skiplock = null, ?string $statestorage = null, ?bool $todisk = null):string|AuthFailedException|HostUnreachableException|VmErrorStop
-    {
-        try{
-            if (!isset($this->cookiesPVE)){
-                return new AuthFailedException("Auth failed!!!");
-            };
-            $getConfigVM =new SuspendVMinNode($this->connection, $this->cookiesPVE);
-            return  $getConfigVM($node, $vmId, $skiplock, $statestorage, $todisk );
-        }catch(AuthFailedException $ex)
-        {
-            return new AuthFailedException();
-        }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException();
-        }catch (VmErrorStart $ex){
-            return new VmErrorStop($ex->getMessage());
+    public function suspend(
+        string $node,
+        int $vmId,
+        ?bool $skiplock = null,
+        ?string $statestorage = null,
+        ?bool $todisk = null,
+    ): string {
+        if (!isset($this->cookiesPVE)) {
+            throw new AuthFailedException('Auth failed: missing cookies.');
         }
+
+        $suspend = new SuspendVM($this->connection, $this->cookiesPVE);
+
+        return $suspend->__invoke($node, $vmId, $skiplock, $statestorage, $todisk);
     }
 
     /**
