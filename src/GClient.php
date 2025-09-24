@@ -660,28 +660,19 @@ class GClient
     }
 
     /**
-     * @param string $node
-     * @param int $vmId
-     * @return string|AuthFailedException|HostUnreachableException|VmErrorReset
+     * @throws VmErrorReset
+     * @throws HostUnreachableException
+     * @throws AuthFailedException
      */
-    public function reset(string $node, int $vmId)
+    public function reset(string $node, int $vmId): string
     {
-
-        try{
-            if (!isset($this->cookiesPVE)){
-                return new AuthFailedException("Auth failed!!!");
-            };
-
-            $reset =new ResetVMNode($this->connection, $this->cookiesPVE);
-            return  $reset($node, $vmId);
-        }catch(AuthFailedException $ex)
-        {
-            return new AuthFailedException();
-        }catch(HostUnreachableException $ex) {
-            return new HostUnreachableException();
-        } catch (VmErrorReset $ex) {
-            return new VmErrorReset($ex->getMessage());
+        if (!isset($this->cookiesPVE)) {
+            throw new AuthFailedException('Auth failed: missing cookies.');
         }
+
+        $reset = new ResetVM($this->connection, $this->cookiesPVE);
+
+        return $reset->__invoke($node, $vmId);
     }
 
 

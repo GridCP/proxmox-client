@@ -4,18 +4,10 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox_Client\VM\Domain\Exceptions;
 
-
-
-final class VmErrorReset extends  \Exception
-
+final class VmErrorReset extends \Exception
 {
-
-    public function __construct(string $message)
-
+    public function __construct(string $message = '')
     {
-
-        parent::__construct("Error reset VM".$message, 400);
-
+        parent::__construct('Error reset VM'.$message, 400);
     }
-
 }
