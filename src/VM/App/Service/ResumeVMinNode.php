@@ -1,14 +1,15 @@
 <?php
-declare(strict_types=1);
-namespace GridCP\Proxmox_Client\VM\App\Service;
 
+declare(strict_types=1);
+
+namespace GridCP\Proxmox_Client\VM\App\Service;
 
 use GridCP\Proxmox_Client\Commons\Application\Helpers\GFunctions;
 use GridCP\Proxmox_Client\Commons\Domain\Entities\Connection;
 use GridCP\Proxmox_Client\Commons\Domain\Entities\CookiesPVE;
 use GridCP\Proxmox_Client\Commons\Domain\Exceptions\PostRequestException;
 use GridCP\Proxmox_Client\Commons\infrastructure\GClientBase;
-use GridCP\Proxmox_Client\VM\Domain\Exceptions\VmErrorStop;
+use GridCP\Proxmox_Client\VM\Domain\Exceptions\VmErrorResume;
 
 class ResumeVMinNode extends GClientBase
 {
@@ -16,27 +17,37 @@ class ResumeVMinNode extends GClientBase
 
     public function __construct(Connection $connection, CookiesPVE $cookiesPVE)
     {
-
         parent::__construct($connection, $cookiesPVE);
     }
 
-
-
-    public function __invoke(string  $node, int $vmid, ?bool $nocheck = null, ?string $skiplock = null):string|PostRequestException|VmErrorStop|null{
+    public function __invoke(
+        string $node,
+        int $vmid,
+        ?bool $nocheck = null,
+        ?string $skiplock = null,
+    ): string {
         try {
             $body = [
                 'node' => $node,
-                'vmid' => $vmid
+                'vmid' => $vmid,
             ];
-            ($skiplock)? $body['skiplock'] = $skiplock : null;
-            ($nocheck)? $body['nocheck'] = $nocheck : null;
-            ($skiplock)? $body['skiplock'] = $skiplock : null;
-            $result = $this->Post("nodes/" . $node . "/qemu/" . $vmid . "/status/resume", $body);
-            return  $result->getBody()->getContents();
-        }catch (PostRequestException $e ) {
-            if ($e->getCode()===500) throw new VmErrorStop($e->getMessage());
-            throw new VmErrorStop("Error in create VM");
-        }
+            ($skiplock) ? $body['skiplock'] = $skiplock : null;
+            ($nocheck) ? $body['nocheck'] = $nocheck : null;
+            ($skiplock) ? $body['skiplock'] = $skiplock : null;
 
+            $result = $this->Post('nodes/'.$node.'/qemu/'.$vmid.'/status/resume', $body);
+
+            return $result->getBody()->getContents();
+        } catch (PostRequestException $e) {
+            if (500 === $e->getCode()) {
+                throw new VmErrorResume($e->getMessage());
+            }
+
+            if (401 === $e->getCode()) {
+                throw new VmErrorResume($e->getMessage());
+            }
+
+            throw new VmErrorResume('Error resuming virtual machine');
+        }
     }
 }

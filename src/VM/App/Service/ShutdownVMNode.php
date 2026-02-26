@@ -34,8 +34,7 @@ class ShutdownVMNode extends GClientBase
                 'node' => $node,
                 'vmid' => $vmid,
             ];
-
-            $result = $this->Post('nodes/' . $node . '/qemu/' . $vmid . '/status/shutdown', $body);
+            $result = $this->Post('nodes/'.$node.'/qemu/'.$vmid.'/status/shutdown', $body);
 
             return $result->getBody()->getContents();
         } catch (PostRequestException $e) {

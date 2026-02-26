@@ -55,24 +55,29 @@ abstract class GClientBase
        }
     }
 
-    protected function Post(string $request, array $requestBody): ?ResponseInterface
+    /**
+     * @throws \GridCP\Proxmox_Client\Commons\Domain\Exceptions\AuthFailedException
+     * @throws \GridCP\Proxmox_Client\Commons\Domain\Exceptions\HostUnreachableException
+     * @throws \GridCP\Proxmox_Client\Commons\Domain\Exceptions\PostRequestException
+     */
+    protected function Post(string $request, array $requestBody): ResponseInterface
     {
-       try {
-            $result=  $this->client->request("POST", $this->connection->getUri() .  $request, [
-                'https_errors'=>false,
+        try {
+            $result = $this->client->request("POST", $this->connection->getUri() . $request, [
+                'https_errors' => false,
                 'verify' => false,
-                'headers' => array_merge($this->defaultHeaders,['CSRFPreventionToken'=>$this->cookies->getCSRFPreventionToken()]),
-                'cookies'=>$this->cookies->getCookies(),
-                'exceptions'=>false,
-                'json' => (count($requestBody) > 0 ) ? $requestBody : null,
+                'headers' => array_merge($this->defaultHeaders, ['CSRFPreventionToken' => $this->cookies->getCSRFPreventionToken()]),
+                'cookies' => $this->cookies->getCookies(),
+                'exceptions' => false,
+                'json' => (count($requestBody) > 0) ? $requestBody : null,
             ]);
-           if ($result->getStatusCode()==401) throw new AuthFailedException();
-           if ($result->getStatusCode() === 0) throw new HostUnreachableException();
-           return $result;
-        }catch (GuzzleException $ex){
-           if ($ex->getCode() === 0) throw new HostUnreachableException();
-           if ($ex->getCode() === 401) throw new AuthFailedException();
-           throw new PostRequestException($ex->getMessage());
+            if ($result->getStatusCode() == 401) throw new AuthFailedException();
+            if ($result->getStatusCode() === 0) throw new HostUnreachableException();
+            return $result;
+        } catch (GuzzleException $ex) {
+            if ($ex->getCode() === 0) throw new HostUnreachableException();
+            if ($ex->getCode() === 401) throw new AuthFailedException();
+            throw new PostRequestException($ex->getMessage());
         }
     }
 

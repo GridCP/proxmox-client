@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox_Client\VM\Domain\Exceptions;
 
-final class VmErrorStart extends \Exception
+final class VmErrorResume extends \Exception
 {
     public function __construct(string $message)
     {
-        parent::__construct('Error start VM'.$message, 400);
+        parent::__construct('Error resuming VM'.$message, 400);
     }
 }

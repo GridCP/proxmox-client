@@ -1,27 +1,19 @@
 <?php
+
 declare(strict_types=1);
+
 namespace GridCP\Proxmox_Client\Commons\Domain\Entities;
 
 final class Connection
 {
-
     private string $host;
     private int $port;
     private string $username;
     private string $password;
     private string $realm;
 
-
-
     private string $uri;
 
-    /**
-     * @param string $host
-     * @param int $port
-     * @param string $username
-     * @param string $password
-     * @param string $realm
-     */
     public function __construct(string $host, int $port, string $username, string $password, string $realm)
     {
         $this->host = $host;
@@ -29,7 +21,7 @@ final class Connection
         $this->username = $username;
         $this->password = $password;
         $this->realm = $realm;
-        $this->uri = "https://".$host.":".$port."/api2/json/";
+        $this->uri = 'https://'.$host.':'.$port.'/api2/json/';
     }
 
     public function getHost(): string
@@ -57,7 +49,7 @@ final class Connection
         return $this->uri;
     }
 
-    public function getRealm():string
+    public function getRealm(): string
     {
         return $this->realm;
     }
