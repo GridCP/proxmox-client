@@ -7,7 +7,9 @@ namespace GridCP\Proxmox\Api;
 use GridCP\Proxmox\Api\Result\RebootResult;
 use GridCP\Proxmox\Api\Result\ResetResult;
 use GridCP\Proxmox\Api\Result\ResultConverter;
+use GridCP\Proxmox\Api\Result\ResultInterface;
 use GridCP\Proxmox\Api\Result\ShoutdownResult;
+use GridCP\Proxmox\Api\Result\StartResult;
 use GridCP\Proxmox\Api\Result\SuspendResult;
 
 class StatusApi implements StatusApiInterface
@@ -31,6 +33,20 @@ class StatusApi implements StatusApiInterface
         $converter = new ResultConverter();
 
         return $converter->convert($response, ShoutdownResult::class);
+    }
+
+    public function start(): ResultInterface
+    {
+        $response = $this->client->request('POST', '/api2/json/nodes/{node}/qemu/{vmid}/status/start', [
+            'vars' => [
+                'node' => $this->node,
+                'vmid' => $this->vmid,
+            ],
+        ]);
+
+        $converter = new ResultConverter();
+
+        return $converter->convert($response, StartResult::class);
     }
 
     public function suspend(): SuspendResult

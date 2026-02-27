@@ -70,6 +70,7 @@ class ResultConverter implements ResultConverterInterface
             SuspendResult::class => SuspendResult::fromArray($data),
             RebootResult::class => RebootResult::fromArray($data),
             ResetResult::class => ResetResult::fromArray($data),
+            StartResult::class => StartResult::fromArray($data),
             default => throw new \RuntimeException('Unsupported result type.'),
         };
     }

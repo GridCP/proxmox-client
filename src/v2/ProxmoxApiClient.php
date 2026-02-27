@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api;
 
 use GridCP\Proxmox\Api\Result\RawHttpResult;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Psr\Http\Client\ClientInterface;
 
 class ProxmoxApiClient
 {
@@ -13,7 +13,7 @@ class ProxmoxApiClient
     private string $csrfToken;
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
+        private readonly ClientInterface $httpClient,
     ) {
     }
 
