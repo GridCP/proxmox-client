@@ -1,41 +1,29 @@
 <?php
 
-if (!file_exists(__DIR__.'/src')) {
-    exit(0);
-}
+$finder = (new PhpCsFixer\Finder())
+    ->in(__DIR__ . '/src')
+    ->exclude('var')
+    ->exclude('vendor');
 
 return (new PhpCsFixer\Config())
-    ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
+    ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,
+        'concat_space' => ['spacing' => 'one'],
         'no_unused_imports' => true,
-        '@Symfony:risky' => true,
-        'protected_to_private' => false,
-        'declare_strict_types' => false,
-        'php_unit_test_case_static_method_calls' => ['call_type' => 'this'],
-        'ordered_class_elements' => [
-            'order' => [
-                'use_trait',
-                'case',
-                'constant_public',
-                'constant_protected',
-                'constant_private',
-                'property_public',
-                'property_protected',
-                'property_private',
-                'construct',
-                'destruct',
-                'magic',
-                'phpunit',
-                'method_public',
-                'method_protected',
-                'method_private',
-            ],
+        'declare_strict_types' => true,
+        'method_argument_space' => [
+            'on_multiline' => 'ensure_fully_multiline',
+            'attribute_placement' => 'ignore',
+        ],
+        'single_line_throw' => false,
+        'multiline_comment_opening_closing' => true,
+        'phpdoc_align' => [
+            'align' => 'left',
+        ],
+        'yoda_style' => true,
+        'type_declaration_spaces' => [
+            'elements' => ['function', 'property', 'constant'],
         ],
     ])
-    ->setRiskyAllowed(true)
-    ->setFinder(
-        (new PhpCsFixer\Finder())
-            ->in([__DIR__.'/src', __DIR__.'/tests'])
-            ->exclude('var')
-    );
+    ->setFinder($finder);

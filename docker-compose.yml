@@ -1,9 +1,7 @@
 services:
-
-   api:
-        image: 'ghcr.io/gridcp/docker-php-8.5.2:main'
-        container_name: 'gridcp-proxmox-client'
-        ports:
-             - "80:80"
+    php-cli:
+        container_name: gridcp-proxmox-client
+        build: infra/php-cli
         volumes:
-            - .:/var/www:cached
+            - './:/application'
+        tty: true
