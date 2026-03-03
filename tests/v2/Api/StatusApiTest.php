@@ -1,0 +1,110 @@
+<?php
+
+declare(strict_types=1);
+
+namespace GridCP\Proxmox\Api\Tests\Api;
+
+use GridCP\Proxmox\Api\Api\StatusApi;
+use GridCP\Proxmox\Api\ProxmoxApiClient;
+use GridCP\Proxmox\Api\Result\CurrentResult;
+use GridCP\Proxmox\Api\Result\StartResult;
+use GridCP\Proxmox\Api\Result\StatusResult;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+
+class StatusApiTest extends TestCase
+{
+    public function testStatus(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": {"status": "running"}}');
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $client->expects($this->once())
+            ->method('get')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status', [])
+            ->willReturn($response);
+
+        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $actual = $api->status();
+
+        $this->assertInstanceOf(StatusResult::class, $actual);
+    }
+
+    public function testCurrent(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": {"status": "running"}}');
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $client->expects($this->once())
+            ->method('get')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/current', [])
+            ->willReturn($response);
+
+        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $actual = $api->current();
+
+        $this->assertInstanceOf(CurrentResult::class, $actual);
+    }
+
+    public function testReboot(): void
+    {
+        $this->markTestSkipped('Test not implemented yet.');
+    }
+
+    public function testReset(): void
+    {
+        $this->markTestSkipped('Test not implemented yet.');
+    }
+
+    public function testResume(): void
+    {
+        $this->markTestSkipped('Test not implemented yet.');
+    }
+
+    public function testShutdown(): void
+    {
+        $this->markTestSkipped('Test not implemented yet.');
+    }
+
+    public function testStart(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $client->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/start')
+            ->willReturn($response);
+
+        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $actual = $api->start();
+
+        $this->assertInstanceOf(StartResult::class, $actual);
+    }
+
+    public function testStop(): void
+    {
+        $this->markTestSkipped('Test not implemented yet.');
+    }
+
+    public function testSuspend(): void
+    {
+        $this->markTestSkipped('Test not implemented yet.');
+    }
+}
