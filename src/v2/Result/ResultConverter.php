@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api\Result;
 
 use GridCP\Proxmox\Api\Exception\AuthenticationException;
+use Psr\Http\Message\ResponseInterface;
 
 class ResultConverter implements ResultConverterInterface
 {
-    public function convert(RawResultInterface $result, string $resultType, array $options = []): ResultInterface
-    {
-        $response = $result->getObject();
+    public function convert(
+        ResponseInterface $response,
+        string $resultType,
+        array $options = [],
+    ): ResultInterface {
+        $content = $response->getBody()->getContents();
 
         if (501 === $response->getStatusCode()) {
             /**
@@ -19,7 +23,7 @@ class ResultConverter implements ResultConverterInterface
              *     message: string,
              * } $data
              */
-            $data = json_decode($response->getContent(), true);
+            $data = json_decode($content, true);
             throw new \RuntimeException($data['message']);
         }
 
@@ -30,7 +34,7 @@ class ResultConverter implements ResultConverterInterface
              *     message: string,
              * } $data
              */
-            $data = json_decode($response->getContent(), true);
+            $data = json_decode($content, true);
             throw new \RuntimeException($data['message']);
         }
 
@@ -42,7 +46,7 @@ class ResultConverter implements ResultConverterInterface
              *     errors: array<string, string>
              * } $data
              */
-            $data = json_decode($response->getContent(), true);
+            $data = json_decode($content, true);
             throw new \RuntimeException($data['message']);
         }
 
@@ -53,11 +57,11 @@ class ResultConverter implements ResultConverterInterface
              *     message: string,
              * } $data
              */
-            $data = json_decode($response->getContent(), true);
+            $data = json_decode($content, true);
             throw new AuthenticationException($data['message']);
         }
 
-        $data = $result->getData();
+        $data = json_decode($content, true);
 
         return $this->normalize($resultType, $data);
     }
@@ -71,6 +75,8 @@ class ResultConverter implements ResultConverterInterface
             RebootResult::class => RebootResult::fromArray($data),
             ResetResult::class => ResetResult::fromArray($data),
             StartResult::class => StartResult::fromArray($data),
+            CurrentResult::class => CurrentResult::fromArray($data),
+            StatusResult::class => StatusResult::fromArray($data),
             default => throw new \RuntimeException('Unsupported result type.'),
         };
     }
