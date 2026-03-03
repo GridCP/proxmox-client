@@ -1,6 +1,8 @@
 <?php
 
-namespace GridCP\Proxmox\Api;
+namespace GridCP\Proxmox\Api\Api;
+
+use GridCP\Proxmox\Api\ProxmoxApiClient;
 
 class QemuApi
 {
