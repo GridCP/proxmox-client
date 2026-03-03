@@ -4,141 +4,129 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Api;
 
-use GridCP\Proxmox\Api\Result\RawHttpResult;
+use GridCP\Proxmox\Api\Api\NodeApi;
+use GridCP\Proxmox\Api\Plugin\ProxmoxAuthenticationPlugin;
+use Http\Client\Common\HttpMethodsClient;
+use Http\Client\Common\Plugin\LoggerPlugin;
+use Monolog\Logger;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\ResponseInterface;
 
-class ProxmoxApiClient
+class ProxmoxApiClient /* implements HttpMethodsClientInterface */
 {
-    private string $ticket;
-    private string $csrfToken;
+    private readonly ProxmoxApiClientBuilder $httpClientBuilder;
 
     public function __construct(
-        private readonly ClientInterface $httpClient,
+        ?ProxmoxApiClientBuilder $httpClientBuilder = null,
     ) {
+        $this->httpClientBuilder = $builder = $httpClientBuilder ?? new ProxmoxApiClientBuilder();
+
+        $builder->addPlugin(new LoggerPlugin(new Logger('proxmox-api-client')));
+    }
+
+    public static function createWithHttpClient(ClientInterface $httpClient): self
+    {
+        return new self(new ProxmoxApiClientBuilder($httpClient));
     }
 
     /**
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
-    public function login(
+    private function login(
         string $realm,
         string $username,
         string $password,
-    ): self {
-        $response = $this->httpClient->request(
-            'POST',
-            '/api2/json/access/ticket',
-            [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ],
-                'json' => [
-                    'username' => $username,
-                    'password' => $password,
-                    'realm' => $realm,
-                ],
-            ]
-        );
+    ): array {
+        $response = $this->post('/api2/json/access/ticket', [], json_encode([
+            'username' => $username,
+            'password' => $password,
+            'realm' => $realm,
+        ]));
 
-        /**
-         * @var array{
-         *     data: array{
-         *         cap: array{
-         *             access: array{
-         *                 "Group.Allocate": int,
-         *                 "Permissions.Modify": int,
-         *                 "User.Modify": int
-         *             },
-         *             storage: array{
-         *                 "Permissions.Modify": int,
-         *                 "Datastore.AllocateSpace": int,
-         *                 "Datastore.Allocate": int,
-         *                 "Datastore.Audit": int,
-         *                 "Datastore.AllocateTemplate": int
-         *             },
-         *             sdn: array{
-         *                 "SDN.Audit": int,
-         *                 "Permissions.Modify": int,
-         *                 "SDN.Allocate": int,
-         *                 "SDN.Use": int
-         *             },
-         *             vms: array{
-         *                 "VM.Snapshot.Rollback": int,
-         *                 "VM.Migrate": int,
-         *                 "VM.Config.Cloudinit": int,
-         *                 "VM.Config.Options": int,
-         *                 "VM.Config.CDROM": int,
-         *                 "VM.Audit": int,
-         *                 "VM.Backup": int,
-         *                 "VM.Allocate": int,
-         *                 "VM.Config.Disk": int,
-         *                 "VM.Monitor": int,
-         *                 "VM.Clone": int,
-         *                 "VM.Config.Network": int,
-         *                 "VM.PowerMgmt": int,
-         *                 "VM.Config.Memory": int,
-         *                 "VM.Snapshot": int,
-         *                 "Permissions.Modify": int,
-         *                 "VM.Config.CPU": int,
-         *                 "VM.Config.HWType": int,
-         *                 "VM.Console": int
-         *             },
-         *             dc: array{
-         *                 "SDN.Use": int,
-         *                 "SDN.Allocate": int,
-         *                 "Sys.Audit": int,
-         *                 "SDN.Audit": int,
-         *                 "Sys.Modify": int
-         *             },
-         *             mapping: array{
-         *                 "Mapping.Audit": int,
-         *                 "Mapping.Use": int,
-         *                 "Mapping.Modify": int,
-         *                 "Permissions.Modify": int
-         *             },
-         *             nodes: array{
-         *                 "Sys.PowerMgmt": int,
-         *                 "Sys.Audit": int,
-         *                 "Sys.Modify": int,
-         *                 "Sys.Syslog": int,
-         *                 "Sys.AccessNetwork": int,
-         *                 "Permissions.Modify": int,
-         *                 "Sys.Incoming": int,
-         *                 "Sys.Console": int
-         *             }
-         *         },
-         *         ticket: string,
-         *         CSRFPreventionToken: string,
-         *         username: string
-         *     }
-         * } $data
-         */
-        $data = $response->toArray();
-        $this->ticket = $data['data']['ticket'];
-        $this->csrfToken = $data['data']['CSRFPreventionToken'];
+        $body = $response->getBody()->__toString();
+        if (true === str_starts_with($response->getHeaderLine('Content-Type'), 'application/json')) {
+            /**
+             * @var array{
+             *     data: array{
+             *         ticket: string,
+             *         CSRFPreventionToken: string,
+             *         username: string
+             *     }
+             * } $data
+             */
+            $content = json_decode($body, true);
 
-        return $this;
+            if (JSON_ERROR_NONE === json_last_error()) {
+                return [
+                    $content['data']['ticket'],
+                    $content['data']['CSRFPreventionToken'],
+                ];
+            }
+        }
+
+        throw new \RuntimeException('Failed to authenticate with Proxmox API: Invalid response format');
     }
 
-    /**
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
-    public function request(string $method, string $url, array $options = []): RawHttpResult
+    public function authenticate(
+        string $realm,
+        string $username,
+        ?string $password = null,
+        ?string $tokenId = null,
+        ?string $token = null,
+        AuthMethod $authMethod = AuthMethod::API_TOKEN,
+    ) {
+        $this->getHttpClientBuilder()->removePlugin(ProxmoxAuthenticationPlugin::class);
+
+        if (AuthMethod::TICKET === $authMethod) {
+            if (null === $password) {
+                throw new \InvalidArgumentException('Password is required for TICKET authentication method');
+            }
+
+            list($ticket, $csrfToken) = $this->login($realm, $username, $password);
+            $authenticationPlugin = new ProxmoxAuthenticationPlugin(
+                realm: $realm,
+                ticket: $ticket,
+                CSRFPreventionToken: $csrfToken,
+                authMethod: $authMethod,
+            );
+        }
+
+        if (AuthMethod::API_TOKEN === $authMethod) {
+            if (null === $tokenId || null === $token) {
+                throw new \InvalidArgumentException('TokenId and token are required for API_TOKEN authentication method');
+            }
+
+            $authenticationPlugin = new ProxmoxAuthenticationPlugin(
+                realm: $realm,
+                username: $username,
+                tokenId: $tokenId,
+                token: $token,
+                authMethod: $authMethod,
+            );
+        }
+
+        $this->getHttpClientBuilder()->addPlugin($authenticationPlugin);
+    }
+
+    public function get(string $url, array $headers = []): ResponseInterface
     {
-        $headers = [
-            'Cookie' => "PVEAuthCookie=$this->ticket",
-            'CSRFPreventionToken' => $this->csrfToken,
-        ];
-        $options['headers'] = array_merge($headers, $options['headers'] ?? []);
+        return $this->getHttpClient()->get($url, $headers);
+    }
 
-        $result = $this->httpClient->request($method, $url, $options);
+    public function post(string $uri, array $headers = [], $body = null): ResponseInterface
+    {
+        return $this->getHttpClient()->post($uri, $headers, $body);
+    }
 
-        return new RawHttpResult($result);
+    private function getHttpClient(): HttpMethodsClient
+    {
+        return $this->httpClientBuilder->getHttpClient();
+    }
+
+    public function getHttpClientBuilder(): ProxmoxApiClientBuilder
+    {
+        return $this->httpClientBuilder;
     }
 
     public function nodes(string $node): NodeApi
