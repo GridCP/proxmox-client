@@ -5,10 +5,19 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api\Result;
 
 use GridCP\Proxmox\Api\Exception\AuthenticationException;
+use GridCP\Proxmox\Api\Result\Normalizer\ApiResultDenormalizer;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Serializer\Serializer;
 
 class ResultConverter implements ResultConverterInterface
 {
+    private readonly Serializer $serializer;
+
+    public function __construct(?Serializer $serializer = null)
+    {
+        $this->serializer = $serializer ?? new Serializer([new ApiResultDenormalizer()]);
+    }
+
     public function convert(
         ResponseInterface $response,
         string $resultType,
@@ -68,16 +77,11 @@ class ResultConverter implements ResultConverterInterface
 
     private function normalize(string $resultType, array $data): ResultInterface
     {
-        return match ($resultType) {
-            TaskResult::class => TaskResult::fromArray($data),
-            ShoutdownResult::class => ShoutdownResult::fromArray($data),
-            SuspendResult::class => SuspendResult::fromArray($data),
-            RebootResult::class => RebootResult::fromArray($data),
-            ResetResult::class => ResetResult::fromArray($data),
-            StartResult::class => StartResult::fromArray($data),
-            CurrentResult::class => CurrentResult::fromArray($data),
-            StatusResult::class => StatusResult::fromArray($data),
-            default => throw new \RuntimeException('Unsupported result type.'),
-        };
+        $result = $this->serializer->denormalize($data, $resultType);
+        if (false === $result instanceof ResultInterface) {
+            throw new \RuntimeException('Unsupported result type.');
+        }
+
+        return $result;
     }
 }

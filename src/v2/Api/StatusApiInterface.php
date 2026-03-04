@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api\Api;
 
 use GridCP\Proxmox\Api\Result\ResultInterface;
-use GridCP\Proxmox\Api\Result\ShoutdownResult;
 use GridCP\Proxmox\Api\Result\SuspendResult;
 
 interface StatusApiInterface
@@ -16,11 +15,16 @@ interface StatusApiInterface
 
     public function reboot(?int $timeout = null): ResultInterface;
 
-    public function reset(?bool $skiplock = null): ResultInterface;
+    public function reset(bool $skiplock = false): ResultInterface;
 
-    public function resume();
+    public function resume(bool $nocheck = false, bool $skiplock = false): ResultInterface;
 
-    public function shoutdown(): ShoutdownResult;
+    public function shoutdown(
+        bool $forceStop = false,
+        bool $keepActive = false,
+        bool $skiplock = false,
+        bool $timeout = false,
+    ): ResultInterface;
 
     public function start();
 
