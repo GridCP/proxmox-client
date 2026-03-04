@@ -48,6 +48,20 @@ class StatusApi implements StatusApiInterface
         return $converter->convert($response, CurrentResult::class);
     }
 
+    public function reboot(?int $timeout = null): ResultInterface
+    {
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reboot', $this->node, $this->vmid);
+        if (null !== $timeout) {
+            $url .= '?' . http_build_query(['timeout' => $timeout]);
+        }
+
+        $response = $this->post($url);
+
+        $converter = new ResultConverter();
+
+        return $converter->convert($response, RebootResult::class);
+    }
+
     public function shoutdown(): ShoutdownResult
     {
         $response = $this->client->request('POST', '/api2/json/nodes/{node}/qemu/{vmid}/status/shutdown', [
@@ -84,20 +98,6 @@ class StatusApi implements StatusApiInterface
         $converter = new ResultConverter();
 
         return $converter->convert($response, SuspendResult::class);
-    }
-
-    public function reboot(): RebootResult
-    {
-        $response = $this->client->request('POST', '/api2/json/nodes/{node}/qemu/{vmid}/status/reboot', [
-            'vars' => [
-                'node' => $this->node,
-                'vmid' => $this->vmid,
-            ],
-        ]);
-
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, RebootResult::class);
     }
 
     public function reset(): ResetResult

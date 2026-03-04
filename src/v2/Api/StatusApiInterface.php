@@ -14,7 +14,7 @@ interface StatusApiInterface
 
     public function current(): ResultInterface;
 
-    public function reboot();
+    public function reboot(?int $timeout = null): ResultInterface;
 
     public function reset();
 

@@ -7,6 +7,7 @@ namespace GridCP\Proxmox\Api\Tests\Api;
 use GridCP\Proxmox\Api\Api\StatusApi;
 use GridCP\Proxmox\Api\ProxmoxApiClient;
 use GridCP\Proxmox\Api\Result\CurrentResult;
+use GridCP\Proxmox\Api\Result\RebootResult;
 use GridCP\Proxmox\Api\Result\StartResult;
 use GridCP\Proxmox\Api\Result\StatusResult;
 use PHPUnit\Framework\TestCase;
@@ -59,7 +60,24 @@ class StatusApiTest extends TestCase
 
     public function testReboot(): void
     {
-        $this->markTestSkipped('Test not implemented yet.');
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $client->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot')
+            ->willReturn($response);
+
+        $api = new StatusApi($client, 'nodeName', 'vmId');
+
+        $actual = $api->reboot();
+
+        $this->assertInstanceOf(RebootResult::class, $actual);
     }
 
     public function testReset(): void
