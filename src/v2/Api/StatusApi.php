@@ -9,6 +9,7 @@ use GridCP\Proxmox\Api\Result\CurrentResult;
 use GridCP\Proxmox\Api\Result\RebootResult;
 use GridCP\Proxmox\Api\Result\ResetResult;
 use GridCP\Proxmox\Api\Result\ResultConverter;
+use GridCP\Proxmox\Api\Result\ResultConverterInterface;
 use GridCP\Proxmox\Api\Result\ResultInterface;
 use GridCP\Proxmox\Api\Result\ResumeResult;
 use GridCP\Proxmox\Api\Result\ShoutdownResult;
@@ -21,9 +22,10 @@ use Psr\Http\Message\StreamInterface;
 class StatusApi implements StatusApiInterface
 {
     public function __construct(
-        private ProxmoxApiClient $client,
-        private string $node,
-        private string $vmid,
+        private readonly ProxmoxApiClient $client,
+        private readonly string $node,
+        private readonly string $vmid,
+        private readonly ResultConverterInterface $resultConverter = new ResultConverter(),
     ) {
     }
 
@@ -101,18 +103,34 @@ class StatusApi implements StatusApiInterface
         return $converter->convert($response, ResumeResult::class);
     }
 
+    /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/shutdown */
     public function shoutdown(
         bool $forceStop = false,
         bool $keepActive = false,
         bool $skiplock = false,
-        bool $timeout = false,
+        ?int $timeout = null,
     ): ResultInterface {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/shutdown', $this->node, $this->vmid);
+        $params = [];
+        if (true === $forceStop) {
+            $params['forceStop'] = $forceStop;
+        }
+        if (true === $keepActive) {
+            $params['keepActive'] = $keepActive;
+        }
+        if (true === $skiplock) {
+            $params['skiplock'] = $skiplock;
+        }
+        if (null !== $timeout) {
+            $params['timeout'] = $timeout;
+        }
+        if (false === empty($params)) {
+            $url .= '?' . http_build_query($params);
+        }
+
         $response = $this->post($url);
 
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, ShoutdownResult::class);
+        return $this->resultConverter->convert($response, ShoutdownResult::class);
     }
 
     public function start(): ResultInterface

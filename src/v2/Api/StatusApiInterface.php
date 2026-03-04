@@ -23,7 +23,7 @@ interface StatusApiInterface
         bool $forceStop = false,
         bool $keepActive = false,
         bool $skiplock = false,
-        bool $timeout = false,
+        ?int $timeout = null,
     ): ResultInterface;
 
     public function start();

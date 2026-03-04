@@ -10,6 +10,7 @@ use GridCP\Proxmox\Api\Result\CurrentResult;
 use GridCP\Proxmox\Api\Result\RebootResult;
 use GridCP\Proxmox\Api\Result\ResetResult;
 use GridCP\Proxmox\Api\Result\ResumeResult;
+use GridCP\Proxmox\Api\Result\ShoutdownResult;
 use GridCP\Proxmox\Api\Result\StartResult;
 use GridCP\Proxmox\Api\Result\StatusResult;
 use PHPUnit\Framework\TestCase;
@@ -202,7 +203,52 @@ class StatusApiTest extends TestCase
 
     public function testShutdown(): void
     {
-        $this->markTestSkipped('Test not implemented yet.');
+        $apiClient = $this->createMock(ProxmoxApiClient::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->expects($this->once())
+            ->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->expects($this->once())
+            ->method('getBody')
+            ->willReturn($stream);
+
+        $apiClient->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/shutdown')
+            ->willReturn($response);
+
+        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $actual = $api->shoutdown();
+
+        $this->assertInstanceOf(ShoutdownResult::class, $actual);
+    }
+
+    public function testShutdownWithParameters(): void
+    {
+        $apiClient = $this->createMock(ProxmoxApiClient::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->expects($this->once())
+            ->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->expects($this->once())
+            ->method('getBody')
+            ->willReturn($stream);
+
+        $apiClient->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/shutdown?forceStop=1&keepActive=1&skiplock=1&timeout=250')
+            ->willReturn($response);
+
+        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $actual = $api->shoutdown(true, true, true, 250);
+
+        $this->assertInstanceOf(ShoutdownResult::class, $actual);
     }
 
     public function testStart(): void
