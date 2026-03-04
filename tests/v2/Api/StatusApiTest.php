@@ -8,6 +8,7 @@ use GridCP\Proxmox\Api\Api\StatusApi;
 use GridCP\Proxmox\Api\ProxmoxApiClient;
 use GridCP\Proxmox\Api\Result\CurrentResult;
 use GridCP\Proxmox\Api\Result\RebootResult;
+use GridCP\Proxmox\Api\Result\ResetResult;
 use GridCP\Proxmox\Api\Result\StartResult;
 use GridCP\Proxmox\Api\Result\StatusResult;
 use PHPUnit\Framework\TestCase;
@@ -49,7 +50,7 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('get')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/current', [])
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/current')
             ->willReturn($response);
 
         $api = new StatusApi($client, 'nodeName', 'vmId');
@@ -70,7 +71,7 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot', [], [])
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot')
             ->willReturn($response);
 
         $api = new StatusApi($client, 'nodeName', 'vmId');
@@ -92,7 +93,7 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot?timeout=30', [], [])
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot?timeout=30')
             ->willReturn($response);
 
         $api = new StatusApi($client, 'nodeName', 'vmId');
@@ -104,7 +105,48 @@ class StatusApiTest extends TestCase
 
     public function testReset(): void
     {
-        $this->markTestSkipped('Test not implemented yet.');
+        $client = $this->createMock(ProxmoxApiClient::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $client->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reset')
+            ->willReturn($response);
+
+        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $actual = $api->reset();
+
+        $this->assertInstanceOf(ResetResult::class, $actual);
+    }
+
+    public function testResetWithSkiplock(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $client->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reset?skiplock=1')
+            ->willReturn($response);
+
+        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $actual = $api->reset(true);
+
+        $this->assertInstanceOf(ResetResult::class, $actual);
     }
 
     public function testResume(): void

@@ -16,7 +16,7 @@ interface StatusApiInterface
 
     public function reboot(?int $timeout = null): ResultInterface;
 
-    public function reset();
+    public function reset(?bool $skiplock = null): ResultInterface;
 
     public function resume();
 

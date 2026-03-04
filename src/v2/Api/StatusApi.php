@@ -15,6 +15,7 @@ use GridCP\Proxmox\Api\Result\StartResult;
 use GridCP\Proxmox\Api\Result\StatusResult;
 use GridCP\Proxmox\Api\Result\SuspendResult;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class StatusApi implements StatusApiInterface
 {
@@ -25,9 +26,7 @@ class StatusApi implements StatusApiInterface
     ) {
     }
 
-    /**
-     * @see https://pve.proxmox.com/pve-docs/api-viewer/#/nodes/{node}/qemu/{vmid}/status
-     */
+    /** @see https://pve.proxmox.com/pve-docs/api-viewer/#/nodes/{node}/qemu/{vmid}/status */
     public function status(): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status', $this->node, $this->vmid);
@@ -38,6 +37,7 @@ class StatusApi implements StatusApiInterface
         return $converter->convert($response, StatusResult::class);
     }
 
+    /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/current */
     public function current(): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/current', $this->node, $this->vmid);
@@ -48,6 +48,7 @@ class StatusApi implements StatusApiInterface
         return $converter->convert($response, CurrentResult::class);
     }
 
+    /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/reboot */
     public function reboot(?int $timeout = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reboot', $this->node, $this->vmid);
@@ -60,6 +61,21 @@ class StatusApi implements StatusApiInterface
         $converter = new ResultConverter();
 
         return $converter->convert($response, RebootResult::class);
+    }
+
+    /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/reset */
+    public function reset(?bool $skiplock = false): ResultInterface
+    {
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reset', $this->node, $this->vmid);
+        if (true === $skiplock) {
+            $url .= '?' . http_build_query(['skiplock' => $skiplock]);
+        }
+
+        $response = $this->client->post($url);
+
+        $converter = new ResultConverter();
+
+        return $converter->convert($response, ResetResult::class);
     }
 
     public function shoutdown(): ShoutdownResult
@@ -100,20 +116,6 @@ class StatusApi implements StatusApiInterface
         return $converter->convert($response, SuspendResult::class);
     }
 
-    public function reset(): ResetResult
-    {
-        $response = $this->client->request('POST', '/api2/json/nodes/{node}/qemu/{vmid}/status/reset', [
-            'vars' => [
-                'node' => $this->node,
-                'vmid' => $this->vmid,
-            ],
-        ]);
-
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, ResetResult::class);
-    }
-
     public function resume()
     {
         // TODO: Implement resume() method.
@@ -129,8 +131,11 @@ class StatusApi implements StatusApiInterface
         return $this->client->get($url, $headers);
     }
 
-    private function post(string $url, array $headers = [], array $body = []): ResponseInterface
-    {
+    private function post(
+        string $url,
+        array $headers = [],
+        string|StreamInterface|null $body = null,
+    ): ResponseInterface {
         return $this->client->post($url, $headers, $body);
     }
 }
