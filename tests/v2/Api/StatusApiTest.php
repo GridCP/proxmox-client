@@ -70,12 +70,34 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot', [], [])
             ->willReturn($response);
 
         $api = new StatusApi($client, 'nodeName', 'vmId');
 
         $actual = $api->reboot();
+
+        $this->assertInstanceOf(RebootResult::class, $actual);
+    }
+
+    public function testRebootWithTimeout(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $client->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot?timeout=30', [], [])
+            ->willReturn($response);
+
+        $api = new StatusApi($client, 'nodeName', 'vmId');
+
+        $actual = $api->reboot(30);
 
         $this->assertInstanceOf(RebootResult::class, $actual);
     }
