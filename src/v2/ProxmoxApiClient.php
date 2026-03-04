@@ -12,6 +12,7 @@ use Monolog\Logger;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class ProxmoxApiClient /* implements HttpMethodsClientInterface */
 {
@@ -114,7 +115,7 @@ class ProxmoxApiClient /* implements HttpMethodsClientInterface */
         return $this->getHttpClient()->get($url, $headers);
     }
 
-    public function post(string $uri, array $headers = [], $body = null): ResponseInterface
+    public function post(string $uri, array $headers = [], string|StreamInterface|null $body = null): ResponseInterface
     {
         return $this->getHttpClient()->post($uri, $headers, $body);
     }
