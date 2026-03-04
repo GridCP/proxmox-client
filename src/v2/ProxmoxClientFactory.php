@@ -8,6 +8,7 @@ use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\UriTemplateHttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+/** @deprecated */
 final readonly class ProxmoxClientFactory implements ProxmoxClientFactoryInterface
 {
     public function __construct(
