@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Api\Api\Parameters;
 
-class StopParameters
+class StopParameters implements ParametersInterface
 {
     /**
      * @param array<string, scalar> $parameters

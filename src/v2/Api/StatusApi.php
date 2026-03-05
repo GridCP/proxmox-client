@@ -6,6 +6,7 @@ namespace GridCP\Proxmox\Api\Api;
 
 use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Api\Parameters\StopParameters;
+use GridCP\Proxmox\Api\Api\Parameters\SuspendParameters;
 use GridCP\Proxmox\Api\ProxmoxApiClient;
 use GridCP\Proxmox\Api\Result\CurrentResult;
 use GridCP\Proxmox\Api\Result\RebootResult;
@@ -170,14 +171,21 @@ class StatusApi implements StatusApiInterface
         return $this->resultConverter->convert($response, StopResult::class);
     }
 
-    public function suspend(): ResultInterface
+    public function suspend(?SuspendParameters $parameters = null): ResultInterface
     {
-        $url = '/api2/json/nodes/{node}/qemu/{vmid}/status/suspend';
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/suspend', $this->node, $this->vmid);
+
+        if (null !== $parameters) {
+            $query = $parameters->toArray();
+
+            if (false === empty($query)) {
+                $url .= '?' . http_build_query($query);
+            }
+        }
+
         $response = $this->post($url);
 
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, SuspendResult::class);
+        return $this->resultConverter->convert($response, SuspendResult::class);
     }
 
     protected function get(string $url, array $headers = []): ResponseInterface

@@ -7,6 +7,7 @@ namespace GridCP\Proxmox\Api\Tests\Api;
 use GridCP\Proxmox\Api\Api\Parameters\MigrationType;
 use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Api\Parameters\StopParameters;
+use GridCP\Proxmox\Api\Api\Parameters\SuspendParameters;
 use GridCP\Proxmox\Api\Api\StatusApi;
 use GridCP\Proxmox\Api\ProxmoxApiClient;
 use GridCP\Proxmox\Api\Result\CurrentResult;
@@ -17,6 +18,7 @@ use GridCP\Proxmox\Api\Result\ShoutdownResult;
 use GridCP\Proxmox\Api\Result\StartResult;
 use GridCP\Proxmox\Api\Result\StatusResult;
 use GridCP\Proxmox\Api\Result\StopResult;
+use GridCP\Proxmox\Api\Result\SuspendResult;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -132,7 +134,7 @@ class StatusApiTest extends TestCase
         $this->assertInstanceOf(ResetResult::class, $actual);
     }
 
-    public function testResetWithSkiplock(): void
+    public function testResetWithParameters(): void
     {
         $client = $this->createMock(ProxmoxApiClient::class);
 
@@ -365,6 +367,54 @@ class StatusApiTest extends TestCase
 
     public function testSuspend(): void
     {
-        $this->markTestSkipped('Test not implemented yet.');
+        $apiClient = $this->createMock(ProxmoxApiClient::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $apiClient->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/suspend')
+            ->willReturn($response);
+
+        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+
+        $actual = $api->suspend();
+
+        $this->assertInstanceOf(SuspendResult::class, $actual);
+    }
+
+    public function testSuspendWithParameters(): void
+    {
+        $apiClient = $this->createMock(ProxmoxApiClient::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $apiClient->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/suspend?skiplock=1&statestorage=local-lvm&todisk=0')
+            ->willReturn($response);
+
+        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+
+        $parameters = new SuspendParameters()
+            ->skipLock(true)
+            ->stateStorage('local-lvm')
+            ->toDisk(false);
+
+        $actual = $api->suspend($parameters);
+
+        $this->assertInstanceOf(SuspendResult::class, $actual);
     }
 }
