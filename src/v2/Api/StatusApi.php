@@ -39,9 +39,7 @@ class StatusApi implements StatusApiInterface
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status', $this->node, $this->vmid);
         $response = $this->get($url);
 
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, StatusResult::class);
+        return $this->resultConverter->convert($response, StatusResult::class);
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/current */
@@ -50,9 +48,7 @@ class StatusApi implements StatusApiInterface
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/current', $this->node, $this->vmid);
         $response = $this->get($url);
 
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, CurrentResult::class);
+        return $this->resultConverter->convert($response, CurrentResult::class);
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/reboot */
@@ -65,9 +61,7 @@ class StatusApi implements StatusApiInterface
 
         $response = $this->post($url);
 
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, RebootResult::class);
+        return $this->resultConverter->convert($response, RebootResult::class);
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/reset */
@@ -80,9 +74,7 @@ class StatusApi implements StatusApiInterface
 
         $response = $this->client->post($url);
 
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, ResetResult::class);
+        return $this->resultConverter->convert($response, ResetResult::class);
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/resume */
@@ -102,9 +94,7 @@ class StatusApi implements StatusApiInterface
 
         $response = $this->post($url);
 
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, ResumeResult::class);
+        return $this->resultConverter->convert($response, ResumeResult::class);
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/shutdown */
@@ -155,6 +145,7 @@ class StatusApi implements StatusApiInterface
         return $this->resultConverter->convert($response, StartResult::class);
     }
 
+    /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/stop */
     public function stop(?StopParameters $parameters = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/stop', $this->node, $this->vmid);
@@ -171,6 +162,7 @@ class StatusApi implements StatusApiInterface
         return $this->resultConverter->convert($response, StopResult::class);
     }
 
+    /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/suspend */
     public function suspend(?SuspendParameters $parameters = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/suspend', $this->node, $this->vmid);
