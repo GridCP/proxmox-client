@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Api\Api;
 
+use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\ProxmoxApiClient;
 use GridCP\Proxmox\Api\Result\CurrentResult;
 use GridCP\Proxmox\Api\Result\RebootResult;
@@ -133,9 +134,19 @@ class StatusApi implements StatusApiInterface
         return $this->resultConverter->convert($response, ShoutdownResult::class);
     }
 
-    public function start(): ResultInterface
+    /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/start */
+    public function start(?StartParameters $parameters = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/start', $this->node, $this->vmid);
+
+        if (null !== $parameters) {
+            $query = $parameters->toArray();
+
+            if (false === empty($query)) {
+                $url .= '?' . http_build_query($query);
+            }
+        }
+
         $response = $this->post($url);
 
         $converter = new ResultConverter();

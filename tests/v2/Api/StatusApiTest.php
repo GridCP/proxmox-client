@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Api\Tests\Api;
 
+use GridCP\Proxmox\Api\Api\Parameters\MigrationType;
+use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Api\StatusApi;
 use GridCP\Proxmox\Api\ProxmoxApiClient;
 use GridCP\Proxmox\Api\Result\CurrentResult;
@@ -268,6 +270,40 @@ class StatusApiTest extends TestCase
 
         $api = new StatusApi($client, 'nodeName', 'vmId');
         $actual = $api->start();
+
+        $this->assertInstanceOf(StartResult::class, $actual);
+    }
+
+    public function testStartWithParameters(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $client->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/start?force-cpu=kvm64&machine=q35&migratedfrom=migratedfrom&migration_network=migration_network&migration_type=secure&nets-host-mtu=nets-host-mtu&skiplock=1&stateuri=stateuri&targetstorage=targetstorage&timeout=300&with-conntrack-state=0')
+            ->willReturn($response);
+
+        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $parameters = new StartParameters()
+            ->forceCpu('kvm64')
+            ->machine('q35')
+            ->migratedFrom('migratedfrom')
+            ->migrationNetwork('migration_network')
+            ->migrationType(MigrationType::SECURE)
+            ->netsHostMtu('nets-host-mtu')
+            ->skipLock(true)
+            ->stateUri('stateuri')
+            ->targetStorage('targetstorage')
+            ->timeout(300)
+            ->withConntrackState(false);
+
+        $actual = $api->start($parameters);
 
         $this->assertInstanceOf(StartResult::class, $actual);
     }
