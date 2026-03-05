@@ -6,6 +6,7 @@ namespace GridCP\Proxmox\Api\Tests\Api;
 
 use GridCP\Proxmox\Api\Api\Parameters\MigrationType;
 use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
+use GridCP\Proxmox\Api\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Api\StatusApi;
 use GridCP\Proxmox\Api\ProxmoxApiClient;
 use GridCP\Proxmox\Api\Result\CurrentResult;
@@ -15,6 +16,7 @@ use GridCP\Proxmox\Api\Result\ResumeResult;
 use GridCP\Proxmox\Api\Result\ShoutdownResult;
 use GridCP\Proxmox\Api\Result\StartResult;
 use GridCP\Proxmox\Api\Result\StatusResult;
+use GridCP\Proxmox\Api\Result\StopResult;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -310,7 +312,55 @@ class StatusApiTest extends TestCase
 
     public function testStop(): void
     {
-        $this->markTestSkipped('Test not implemented yet.');
+        $apiClient = $this->createMock(ProxmoxApiClient::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $apiClient->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/stop')
+            ->willReturn($response);
+
+        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $actual = $api->stop();
+
+        $this->assertInstanceOf(StopResult::class, $actual);
+    }
+
+    public function testStopWithParameters(): void
+    {
+        $apiClient = $this->createMock(ProxmoxApiClient::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')
+            ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getBody')
+            ->willReturn($stream);
+
+        $apiClient->expects($this->once())
+            ->method('post')
+            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/stop?keepActive=1&migratedfrom=migratedfrom&overrule-shutdown=0&skiplock=0&timeout=100')
+            ->willReturn($response);
+
+        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $parameters = new StopParameters()
+            ->keepActive(true)
+            ->migratedFrom('migratedfrom')
+            ->overruleShutdown(false)
+            ->skipLock(false)
+            ->timeout(100);
+
+        $actual = $api->stop($parameters);
+
+        $this->assertInstanceOf(StopResult::class, $actual);
     }
 
     public function testSuspend(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api\Api;
 
 use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
+use GridCP\Proxmox\Api\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\ProxmoxApiClient;
 use GridCP\Proxmox\Api\Result\CurrentResult;
 use GridCP\Proxmox\Api\Result\RebootResult;
@@ -16,6 +17,7 @@ use GridCP\Proxmox\Api\Result\ResumeResult;
 use GridCP\Proxmox\Api\Result\ShoutdownResult;
 use GridCP\Proxmox\Api\Result\StartResult;
 use GridCP\Proxmox\Api\Result\StatusResult;
+use GridCP\Proxmox\Api\Result\StopResult;
 use GridCP\Proxmox\Api\Result\SuspendResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -149,28 +151,33 @@ class StatusApi implements StatusApiInterface
 
         $response = $this->post($url);
 
-        $converter = new ResultConverter();
-
-        return $converter->convert($response, StartResult::class);
+        return $this->resultConverter->convert($response, StartResult::class);
     }
 
-    public function suspend(): SuspendResult
+    public function stop(?StopParameters $parameters = null): ResultInterface
     {
-        $response = $this->client->request('POST', '/api2/json/nodes/{node}/qemu/{vmid}/status/suspend', [
-            'vars' => [
-                'node' => $this->node,
-                'vmid' => $this->vmid,
-            ],
-        ]);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/stop', $this->node, $this->vmid);
+
+        if (null !== $parameters) {
+            $query = $parameters->toArray();
+
+            if (false === empty($query)) {
+                $url .= '?' . http_build_query($query);
+            }
+        }
+        $response = $this->post($url);
+
+        return $this->resultConverter->convert($response, StopResult::class);
+    }
+
+    public function suspend(): ResultInterface
+    {
+        $url = '/api2/json/nodes/{node}/qemu/{vmid}/status/suspend';
+        $response = $this->post($url);
 
         $converter = new ResultConverter();
 
         return $converter->convert($response, SuspendResult::class);
-    }
-
-    public function stop()
-    {
-        // TODO: Implement stop() method.
     }
 
     protected function get(string $url, array $headers = []): ResponseInterface

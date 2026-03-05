@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Api\Api;
 
+use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
+use GridCP\Proxmox\Api\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Result\ResultInterface;
-use GridCP\Proxmox\Api\Result\SuspendResult;
+
 
 interface StatusApiInterface
 {
@@ -26,9 +28,9 @@ interface StatusApiInterface
         ?int $timeout = null,
     ): ResultInterface;
 
-    public function start();
+    public function start(?StartParameters $parameters = null): ResultInterface;
 
-    public function stop();
+    public function stop(?StopParameters $parameters = null): ResultInterface;
 
-    public function suspend(): SuspendResult;
+    public function suspend(): ResultInterface;
 }
