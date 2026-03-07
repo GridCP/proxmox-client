@@ -28,7 +28,7 @@ class StatusApi implements StatusApiInterface
     public function __construct(
         private readonly ProxmoxApiClient $client,
         private readonly string $node,
-        private readonly string $vmid,
+        private readonly int $vmId,
         private readonly ResultConverterInterface $resultConverter = new ResultConverter(),
     ) {
     }
@@ -36,7 +36,7 @@ class StatusApi implements StatusApiInterface
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/#/nodes/{node}/qemu/{vmid}/status */
     public function status(): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status', $this->node, $this->vmId);
         $response = $this->get($url);
 
         return $this->resultConverter->convert($response, StatusResult::class);
@@ -45,7 +45,7 @@ class StatusApi implements StatusApiInterface
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/current */
     public function current(): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/current', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/current', $this->node, $this->vmId);
         $response = $this->get($url);
 
         return $this->resultConverter->convert($response, CurrentResult::class);
@@ -54,7 +54,7 @@ class StatusApi implements StatusApiInterface
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/reboot */
     public function reboot(?int $timeout = null): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reboot', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reboot', $this->node, $this->vmId);
         if (null !== $timeout) {
             $url .= '?' . http_build_query(['timeout' => $timeout]);
         }
@@ -67,7 +67,7 @@ class StatusApi implements StatusApiInterface
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/reset */
     public function reset(bool $skiplock = false): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reset', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reset', $this->node, $this->vmId);
         if (true === $skiplock) {
             $url .= '?' . http_build_query(['skiplock' => $skiplock]);
         }
@@ -80,7 +80,7 @@ class StatusApi implements StatusApiInterface
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/resume */
     public function resume(bool $nocheck = false, bool $skiplock = false): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/resume', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/resume', $this->node, $this->vmId);
         $params = [];
         if (true === $nocheck) {
             $params['nocheck'] = $nocheck;
@@ -104,7 +104,7 @@ class StatusApi implements StatusApiInterface
         bool $skiplock = false,
         ?int $timeout = null,
     ): ResultInterface {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/shutdown', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/shutdown', $this->node, $this->vmId);
         $params = [];
         if (true === $forceStop) {
             $params['forceStop'] = $forceStop;
@@ -130,7 +130,7 @@ class StatusApi implements StatusApiInterface
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/start */
     public function start(?StartParameters $parameters = null): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/start', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/start', $this->node, $this->vmId);
 
         if (null !== $parameters) {
             $query = $parameters->toArray();
@@ -148,7 +148,7 @@ class StatusApi implements StatusApiInterface
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/stop */
     public function stop(?StopParameters $parameters = null): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/stop', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/stop', $this->node, $this->vmId);
 
         if (null !== $parameters) {
             $query = $parameters->toArray();
@@ -165,7 +165,7 @@ class StatusApi implements StatusApiInterface
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/suspend */
     public function suspend(?SuspendParameters $parameters = null): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/suspend', $this->node, $this->vmid);
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/suspend', $this->node, $this->vmId);
 
         if (null !== $parameters) {
             $query = $parameters->toArray();

@@ -28,19 +28,21 @@ class StatusApiTest extends TestCase
     public function testStatus(): void
     {
         $client = $this->createMock(ProxmoxApiClient::class);
-        $response = $this->createMock(ResponseInterface::class);
+
         $stream = $this->createMock(StreamInterface::class);
         $stream->method('getContents')
             ->willReturn('{"data": {"status": "running"}}');
+
+        $response = $this->createMock(ResponseInterface::class);
         $response->method('getBody')
             ->willReturn($stream);
 
         $client->expects($this->once())
             ->method('get')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status', [])
+            ->with('/api2/json/nodes/nodeName/qemu/100/status', [])
             ->willReturn($response);
 
-        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $api = new StatusApi($client, 'nodeName', 100);
         $actual = $api->status();
 
         $this->assertInstanceOf(StatusResult::class, $actual);
@@ -58,10 +60,10 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('get')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/current')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/current')
             ->willReturn($response);
 
-        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $api = new StatusApi($client, 'nodeName', 100);
         $actual = $api->current();
 
         $this->assertInstanceOf(CurrentResult::class, $actual);
@@ -79,10 +81,10 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/reboot')
             ->willReturn($response);
 
-        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $api = new StatusApi($client, 'nodeName', 100);
 
         $actual = $api->reboot();
 
@@ -101,10 +103,10 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reboot?timeout=30')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/reboot?timeout=30')
             ->willReturn($response);
 
-        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $api = new StatusApi($client, 'nodeName', 100);
 
         $actual = $api->reboot(30);
 
@@ -125,10 +127,10 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reset')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/reset')
             ->willReturn($response);
 
-        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $api = new StatusApi($client, 'nodeName', 100);
         $actual = $api->reset();
 
         $this->assertInstanceOf(ResetResult::class, $actual);
@@ -148,10 +150,10 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/reset?skiplock=1')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/reset?skiplock=1')
             ->willReturn($response);
 
-        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $api = new StatusApi($client, 'nodeName', 100);
         $actual = $api->reset(true);
 
         $this->assertInstanceOf(ResetResult::class, $actual);
@@ -173,10 +175,10 @@ class StatusApiTest extends TestCase
 
         $apiClient->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/resume')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/resume')
             ->willReturn($response);
 
-        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $api = new StatusApi($apiClient, 'nodeName', 100);
         $actual = $api->resume();
 
         $this->assertInstanceOf(ResumeResult::class, $actual);
@@ -198,10 +200,10 @@ class StatusApiTest extends TestCase
 
         $apiClient->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/resume?nocheck=1&skiplock=1')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/resume?nocheck=1&skiplock=1')
             ->willReturn($response);
 
-        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $api = new StatusApi($apiClient, 'nodeName', 100);
         $actual = $api->resume(true, true);
 
         $this->assertInstanceOf(ResumeResult::class, $actual);
@@ -223,10 +225,10 @@ class StatusApiTest extends TestCase
 
         $apiClient->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/shutdown')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/shutdown')
             ->willReturn($response);
 
-        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $api = new StatusApi($apiClient, 'nodeName', 100);
         $actual = $api->shoutdown();
 
         $this->assertInstanceOf(ShoutdownResult::class, $actual);
@@ -248,10 +250,10 @@ class StatusApiTest extends TestCase
 
         $apiClient->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/shutdown?forceStop=1&keepActive=1&skiplock=1&timeout=250')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/shutdown?forceStop=1&keepActive=1&skiplock=1&timeout=250')
             ->willReturn($response);
 
-        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $api = new StatusApi($apiClient, 'nodeName', 100);
         $actual = $api->shoutdown(true, true, true, 250);
 
         $this->assertInstanceOf(ShoutdownResult::class, $actual);
@@ -269,10 +271,10 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/start')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/start')
             ->willReturn($response);
 
-        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $api = new StatusApi($client, 'nodeName', 100);
         $actual = $api->start();
 
         $this->assertInstanceOf(StartResult::class, $actual);
@@ -281,19 +283,21 @@ class StatusApiTest extends TestCase
     public function testStartWithParameters(): void
     {
         $client = $this->createMock(ProxmoxApiClient::class);
-        $response = $this->createMock(ResponseInterface::class);
+
         $stream = $this->createMock(StreamInterface::class);
         $stream->method('getContents')
             ->willReturn('{"data": "uuid-test"}');
+
+        $response = $this->createMock(ResponseInterface::class);
         $response->method('getBody')
             ->willReturn($stream);
 
         $client->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/start?force-cpu=kvm64&machine=q35&migratedfrom=migratedfrom&migration_network=migration_network&migration_type=secure&nets-host-mtu=nets-host-mtu&skiplock=1&stateuri=stateuri&targetstorage=targetstorage&timeout=300&with-conntrack-state=0')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/start?force-cpu=kvm64&machine=q35&migratedfrom=migratedfrom&migration_network=migration_network&migration_type=secure&nets-host-mtu=nets-host-mtu&skiplock=1&stateuri=stateuri&targetstorage=targetstorage&timeout=300&with-conntrack-state=0')
             ->willReturn($response);
 
-        $api = new StatusApi($client, 'nodeName', 'vmId');
+        $api = new StatusApi($client, 'nodeName', 100);
         $parameters = new StartParameters()
             ->forceCpu('kvm64')
             ->machine('q35')
@@ -326,10 +330,10 @@ class StatusApiTest extends TestCase
 
         $apiClient->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/stop')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/stop')
             ->willReturn($response);
 
-        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $api = new StatusApi($apiClient, 'nodeName', 100);
         $actual = $api->stop();
 
         $this->assertInstanceOf(StopResult::class, $actual);
@@ -349,10 +353,10 @@ class StatusApiTest extends TestCase
 
         $apiClient->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/stop?keepActive=1&migratedfrom=migratedfrom&overrule-shutdown=0&skiplock=0&timeout=100')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/stop?keepActive=1&migratedfrom=migratedfrom&overrule-shutdown=0&skiplock=0&timeout=100')
             ->willReturn($response);
 
-        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $api = new StatusApi($apiClient, 'nodeName', 100);
         $parameters = new StopParameters()
             ->keepActive(true)
             ->migratedFrom('migratedfrom')
@@ -379,10 +383,10 @@ class StatusApiTest extends TestCase
 
         $apiClient->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/suspend')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/suspend')
             ->willReturn($response);
 
-        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $api = new StatusApi($apiClient, 'nodeName', 100);
 
         $actual = $api->suspend();
 
@@ -403,10 +407,10 @@ class StatusApiTest extends TestCase
 
         $apiClient->expects($this->once())
             ->method('post')
-            ->with('/api2/json/nodes/nodeName/qemu/vmId/status/suspend?skiplock=1&statestorage=local-lvm&todisk=0')
+            ->with('/api2/json/nodes/nodeName/qemu/100/status/suspend?skiplock=1&statestorage=local-lvm&todisk=0')
             ->willReturn($response);
 
-        $api = new StatusApi($apiClient, 'nodeName', 'vmId');
+        $api = new StatusApi($apiClient, 'nodeName', 100);
 
         $parameters = new SuspendParameters()
             ->skipLock(true)

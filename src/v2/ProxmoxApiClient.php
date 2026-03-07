@@ -120,6 +120,11 @@ class ProxmoxApiClient /* implements HttpMethodsClientInterface */
         return $this->getHttpClient()->post($uri, $headers, $body);
     }
 
+    public function delete(string $url, array $headers = [], string|StreamInterface|null $body = null): ResponseInterface
+    {
+        return $this->getHttpClient()->delete($url, $headers, $body);
+    }
+
     private function getHttpClient(): HttpMethodsClient
     {
         return $this->httpClientBuilder->getHttpClient();
