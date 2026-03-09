@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api;
+namespace GridCP\Proxmox;
 
 use GridCP\Proxmox\Api\NodeApi;
 use GridCP\Proxmox\Plugin\ProxmoxAuthenticationPlugin;

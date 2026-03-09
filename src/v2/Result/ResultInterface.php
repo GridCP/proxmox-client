@@ -6,5 +6,4 @@ namespace GridCP\Proxmox\Result;
 
 interface ResultInterface
 {
-    public static function fromArray(array $result): self;
 }
