@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Exception;
+namespace GridCP\Proxmox\Exception;
 
 class AuthenticationException extends \RuntimeException
 {

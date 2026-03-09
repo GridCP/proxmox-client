@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Result;
+namespace GridCP\Proxmox\Result;
 
 final readonly class SuspendResult implements ResultInterface
 {

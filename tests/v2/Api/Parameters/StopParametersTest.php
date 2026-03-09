@@ -1,8 +1,8 @@
 <?php
 
-namespace GridCP\Proxmox\Api\Tests\Api\Parameters;
+namespace GridCP\Proxmox\Tests\Api\Parameters;
 
-use GridCP\Proxmox\Api\Api\Parameters\StopParameters;
+use GridCP\Proxmox\Api\Parameters\StopParameters;
 use PHPUnit\Framework\TestCase;
 
 class StopParametersTest extends TestCase

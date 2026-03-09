@@ -6,13 +6,13 @@
   "autoload": {
     "psr-4": {
       "GridCP\\Proxmox_Client\\": "src/",
-      "GridCP\\Proxmox\\Api\\": "src/v2"
+      "GridCP\\Proxmox\\": "src/v2"
     }
   },
   "autoload-dev": {
     "psr-4": {
       "GridCP\\Proxmox_Client\\Tests\\": "tests/",
-      "GridCP\\Proxmox\\Api\\Tests\\": "tests/v2"
+      "GridCP\\Proxmox\\Tests\\": "tests/v2"
     }
   },
   "authors": [

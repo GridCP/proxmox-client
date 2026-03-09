@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api;
+namespace GridCP\Proxmox;
 
 enum AuthMethod: string
 {

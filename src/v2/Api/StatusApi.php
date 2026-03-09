@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Api;
+namespace GridCP\Proxmox\Api;
 
-use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
-use GridCP\Proxmox\Api\Api\Parameters\StopParameters;
-use GridCP\Proxmox\Api\Api\Parameters\SuspendParameters;
-use GridCP\Proxmox\Api\ProxmoxApiClient;
-use GridCP\Proxmox\Api\Result\CurrentResult;
-use GridCP\Proxmox\Api\Result\RebootResult;
-use GridCP\Proxmox\Api\Result\ResetResult;
-use GridCP\Proxmox\Api\Result\ResultConverter;
-use GridCP\Proxmox\Api\Result\ResultConverterInterface;
-use GridCP\Proxmox\Api\Result\ResultInterface;
-use GridCP\Proxmox\Api\Result\ResumeResult;
-use GridCP\Proxmox\Api\Result\ShoutdownResult;
-use GridCP\Proxmox\Api\Result\StartResult;
-use GridCP\Proxmox\Api\Result\StatusResult;
-use GridCP\Proxmox\Api\Result\StopResult;
-use GridCP\Proxmox\Api\Result\SuspendResult;
+use GridCP\Proxmox\Api\Parameters\StartParameters;
+use GridCP\Proxmox\Api\Parameters\StopParameters;
+use GridCP\Proxmox\Api\Parameters\SuspendParameters;
+use GridCP\Proxmox\ProxmoxApiClient;
+use GridCP\Proxmox\Result\CurrentResult;
+use GridCP\Proxmox\Result\RebootResult;
+use GridCP\Proxmox\Result\ResetResult;
+use GridCP\Proxmox\Result\ResultConverter;
+use GridCP\Proxmox\Result\ResultConverterInterface;
+use GridCP\Proxmox\Result\ResultInterface;
+use GridCP\Proxmox\Result\ResumeResult;
+use GridCP\Proxmox\Result\ShoutdownResult;
+use GridCP\Proxmox\Result\StartResult;
+use GridCP\Proxmox\Result\StatusResult;
+use GridCP\Proxmox\Result\StopResult;
+use GridCP\Proxmox\Result\SuspendResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 

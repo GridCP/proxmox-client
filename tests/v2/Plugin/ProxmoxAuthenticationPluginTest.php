@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Tests\Plugin;
+namespace GridCP\Proxmox\Tests\Plugin;
 
-use GridCP\Proxmox\Api\AuthMethod;
-use GridCP\Proxmox\Api\Plugin\ProxmoxAuthenticationPlugin;
+use GridCP\Proxmox\AuthMethod;
+use GridCP\Proxmox\Plugin\ProxmoxAuthenticationPlugin;
 use Http\Promise\FulfilledPromise;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;

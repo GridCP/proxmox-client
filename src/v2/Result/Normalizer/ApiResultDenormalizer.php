@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Result\Normalizer;
+namespace GridCP\Proxmox\Result\Normalizer;
 
-use GridCP\Proxmox\Api\Result\CurrentResult;
-use GridCP\Proxmox\Api\Result\DestroyResult;
-use GridCP\Proxmox\Api\Result\RebootResult;
-use GridCP\Proxmox\Api\Result\ResetResult;
-use GridCP\Proxmox\Api\Result\ResumeResult;
-use GridCP\Proxmox\Api\Result\ShoutdownResult;
-use GridCP\Proxmox\Api\Result\StartResult;
-use GridCP\Proxmox\Api\Result\StatusResult;
-use GridCP\Proxmox\Api\Result\StopResult;
-use GridCP\Proxmox\Api\Result\SuspendResult;
-use GridCP\Proxmox\Api\Result\TaskResult;
+use GridCP\Proxmox\Result\CurrentResult;
+use GridCP\Proxmox\Result\DestroyResult;
+use GridCP\Proxmox\Result\RebootResult;
+use GridCP\Proxmox\Result\ResetResult;
+use GridCP\Proxmox\Result\ResumeResult;
+use GridCP\Proxmox\Result\ShoutdownResult;
+use GridCP\Proxmox\Result\StartResult;
+use GridCP\Proxmox\Result\StatusResult;
+use GridCP\Proxmox\Result\StopResult;
+use GridCP\Proxmox\Result\SuspendResult;
+use GridCP\Proxmox\Result\TaskResult;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 

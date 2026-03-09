@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Api;
+namespace GridCP\Proxmox\Api;
 
-use GridCP\Proxmox\Api\ProxmoxApiClient;
+use GridCP\Proxmox\ProxmoxApiClient;
 
 class NodeApi
 {

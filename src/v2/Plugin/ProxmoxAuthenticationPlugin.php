@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Plugin;
+namespace GridCP\Proxmox\Plugin;
 
-use GridCP\Proxmox\Api\AuthMethod;
+use GridCP\Proxmox\AuthMethod;
 use Http\Client\Common\Plugin;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;

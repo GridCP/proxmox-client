@@ -1,6 +1,6 @@
 <?php
 
-namespace GridCP\Proxmox\Api\Api\Parameters;
+namespace GridCP\Proxmox\Api\Parameters;
 
 interface ParametersInterface
 {

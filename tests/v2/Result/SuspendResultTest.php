@@ -1,8 +1,8 @@
 <?php
 
-namespace GridCP\Proxmox\Api\Tests\Result;
+namespace GridCP\Proxmox\Tests\Result;
 
-use GridCP\Proxmox\Api\Result\SuspendResult;
+use GridCP\Proxmox\Result\SuspendResult;
 use PHPUnit\Framework\TestCase;
 
 class SuspendResultTest extends TestCase

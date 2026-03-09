@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Api;
+namespace GridCP\Proxmox\Api;
 
-use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
-use GridCP\Proxmox\Api\Api\Parameters\StopParameters;
-use GridCP\Proxmox\Api\Result\ResultInterface;
+use GridCP\Proxmox\Api\Parameters\StartParameters;
+use GridCP\Proxmox\Api\Parameters\StopParameters;
+use GridCP\Proxmox\Result\ResultInterface;
 
 
 interface StatusApiInterface

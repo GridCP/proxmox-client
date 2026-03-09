@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Result;
+namespace GridCP\Proxmox\Result;
 
-use GridCP\Proxmox\Api\Exception\AuthenticationException;
-use GridCP\Proxmox\Api\Result\Normalizer\ApiResultDenormalizer;
+use GridCP\Proxmox\Exception\AuthenticationException;
+use GridCP\Proxmox\Result\Normalizer\ApiResultDenormalizer;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\Serializer;
 

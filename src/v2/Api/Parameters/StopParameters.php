@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Api\Parameters;
+namespace GridCP\Proxmox\Api\Parameters;
 
 class StopParameters implements ParametersInterface
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Api;
+namespace GridCP\Proxmox\Api;
 
-use GridCP\Proxmox\Api\ProxmoxApiClient;
-use GridCP\Proxmox\Api\Result\ResultConverter;
-use GridCP\Proxmox\Api\Result\TaskResult;
+use GridCP\Proxmox\ProxmoxApiClient;
+use GridCP\Proxmox\Result\ResultConverter;
+use GridCP\Proxmox\Result\TaskResult;
 
 class TaskApi
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Result;
+namespace GridCP\Proxmox\Result;
 
 class StartResult implements ResultInterface
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Tests\Api;
+namespace GridCP\Proxmox\Tests\Api;
 
-use GridCP\Proxmox\Api\Api\Parameters\DestroyParameters;
-use GridCP\Proxmox\Api\Api\QemuApi;
-use GridCP\Proxmox\Api\ProxmoxApiClient;
-use GridCP\Proxmox\Api\Result\DestroyResult;
+use GridCP\Proxmox\Api\Parameters\DestroyParameters;
+use GridCP\Proxmox\Api\QemuApi;
+use GridCP\Proxmox\ProxmoxApiClient;
+use GridCP\Proxmox\Result\DestroyResult;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;

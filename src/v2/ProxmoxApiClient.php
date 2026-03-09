@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Api;
 
-use GridCP\Proxmox\Api\Api\NodeApi;
-use GridCP\Proxmox\Api\Plugin\ProxmoxAuthenticationPlugin;
+use GridCP\Proxmox\Api\NodeApi;
+use GridCP\Proxmox\Plugin\ProxmoxAuthenticationPlugin;
 use Http\Client\Common\HttpMethodsClient;
 use Http\Client\Common\Plugin\LoggerPlugin;
 use Monolog\Logger;

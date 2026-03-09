@@ -1,9 +1,9 @@
 <?php
 
-namespace GridCP\Proxmox\Api\Tests\Api\Parameters;
+namespace GridCP\Proxmox\Tests\Api\Parameters;
 
-use GridCP\Proxmox\Api\Api\Parameters\MigrationType;
-use GridCP\Proxmox\Api\Api\Parameters\StartParameters;
+use GridCP\Proxmox\Api\Parameters\MigrationType;
+use GridCP\Proxmox\Api\Parameters\StartParameters;
 use PHPUnit\Framework\TestCase;
 
 class StartParametersTest extends TestCase

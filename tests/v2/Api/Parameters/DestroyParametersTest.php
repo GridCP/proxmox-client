@@ -1,8 +1,8 @@
 <?php
 
-namespace GridCP\Proxmox\Api\Tests\Api\Parameters;
+namespace GridCP\Proxmox\Tests\Api\Parameters;
 
-use GridCP\Proxmox\Api\Api\Parameters\DestroyParameters;
+use GridCP\Proxmox\Api\Parameters\DestroyParameters;
 use PHPUnit\Framework\TestCase;
 
 class DestroyParametersTest extends TestCase

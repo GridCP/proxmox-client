@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Tests\Api\Parameters;
+namespace GridCP\Proxmox\Tests\Api\Parameters;
 
-use GridCP\Proxmox\Api\Api\Parameters\SuspendParameters;
+use GridCP\Proxmox\Api\Parameters\SuspendParameters;
 use PHPUnit\Framework\TestCase;
 
 class SuspendParametersTest extends TestCase

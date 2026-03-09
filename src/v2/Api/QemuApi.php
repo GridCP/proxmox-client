@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Api;
+namespace GridCP\Proxmox\Api;
 
-use GridCP\Proxmox\Api\Api\Parameters\DestroyParameters;
-use GridCP\Proxmox\Api\ProxmoxApiClient;
-use GridCP\Proxmox\Api\Result\DestroyResult;
-use GridCP\Proxmox\Api\Result\ResultConverter;
-use GridCP\Proxmox\Api\Result\ResultConverterInterface;
-use GridCP\Proxmox\Api\Result\ResultInterface;
+use GridCP\Proxmox\Api\Parameters\DestroyParameters;
+use GridCP\Proxmox\ProxmoxApiClient;
+use GridCP\Proxmox\Result\DestroyResult;
+use GridCP\Proxmox\Result\ResultConverter;
+use GridCP\Proxmox\Result\ResultConverterInterface;
+use GridCP\Proxmox\Result\ResultInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class QemuApi
