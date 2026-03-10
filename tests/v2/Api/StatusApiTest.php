@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Tests\Api;
 
 use GridCP\Proxmox\Api\Parameters\MigrationType;
+use GridCP\Proxmox\Api\Parameters\RebootParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Parameters\SuspendParameters;
@@ -91,7 +92,7 @@ class StatusApiTest extends TestCase
         $this->assertInstanceOf(RebootResult::class, $actual);
     }
 
-    public function testRebootWithTimeout(): void
+    public function testRebootWithParameters(): void
     {
         $client = $this->createMock(ProxmoxApiClient::class);
         $response = $this->createMock(ResponseInterface::class);
@@ -108,7 +109,10 @@ class StatusApiTest extends TestCase
 
         $api = new StatusApi($client, 'nodeName', 100);
 
-        $actual = $api->reboot(30);
+        $parameters = new RebootParameters()
+            ->timeout(30);
+
+        $actual = $api->reboot($parameters);
 
         $this->assertInstanceOf(RebootResult::class, $actual);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Api;
 
+use GridCP\Proxmox\Api\Parameters\RebootParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Parameters\SuspendParameters;
@@ -52,11 +53,16 @@ class StatusApi implements StatusApiInterface
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/reboot */
-    public function reboot(?int $timeout = null): ResultInterface
+    public function reboot(?RebootParameters $parameters = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reboot', $this->node, $this->vmId);
-        if (null !== $timeout) {
-            $url .= '?' . http_build_query(['timeout' => $timeout]);
+
+        if (null !== $parameters) {
+            $query = $parameters->toArray();
+
+            if (false === empty($query)) {
+                $url .= '?' . http_build_query($query);
+            }
         }
 
         $response = $this->post($url);
