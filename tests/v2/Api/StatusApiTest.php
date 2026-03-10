@@ -32,7 +32,7 @@ class StatusApiTest extends TestCase
 
         $stream = $this->createMock(StreamInterface::class);
         $stream->method('getContents')
-            ->willReturn('{"data": {"status": "running"}}');
+            ->willReturn('{"data": {"subdir": "/foo/bar"}}');
 
         $response = $this->createMock(ResponseInterface::class);
         $response->method('getBody')
@@ -40,7 +40,7 @@ class StatusApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('get')
-            ->with('/api2/json/nodes/nodeName/qemu/100/status', [])
+            ->with('/api2/json/nodes/nodeName/qemu/100/status')
             ->willReturn($response);
 
         $api = new StatusApi($client, 'nodeName', 100);
