@@ -37,15 +37,30 @@ class ProxmoxApiClient /* implements HttpMethodsClientInterface */
     private function login(
         string $realm,
         string $username,
+        #[\SensitiveParameter]
         string $password,
     ): array {
-        $response = $this->post('/api2/json/access/ticket', [], json_encode([
+        $response = $this->post('/api2/json/access/ticket', [
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+        ], json_encode([
             'username' => $username,
             'password' => $password,
             'realm' => $realm,
         ]));
 
+        $statusCode = $response->getStatusCode();
         $body = $response->getBody()->__toString();
+        if (200 !== $statusCode) {
+            $msg = sprintf(
+                'Failed to authenticate with Proxmox API: %s Response body: %s',
+                $response->getReasonPhrase(),
+                $body,
+            );
+
+            throw new \RuntimeException($msg);
+        }
+
         if (true === str_starts_with($response->getHeaderLine('Content-Type'), 'application/json')) {
             /**
              * @var array{
