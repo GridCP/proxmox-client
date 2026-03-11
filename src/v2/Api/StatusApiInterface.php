@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api;
 
 use GridCP\Proxmox\Api\Parameters\RebootParameters;
+use GridCP\Proxmox\Api\Parameters\ResetParameters;
+use GridCP\Proxmox\Api\Parameters\ResumeParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
+use GridCP\Proxmox\Api\Parameters\SuspendParameters;
 use GridCP\Proxmox\Result\ResultInterface;
 
 interface StatusApiInterface
@@ -17,7 +20,7 @@ interface StatusApiInterface
 
     public function reboot(?RebootParameters $parameters = null): ResultInterface;
 
-    public function reset(bool $skiplock = false): ResultInterface;
+    public function reset(?ResetParameters $parameters = null): ResultInterface;
 
     public function resume(?ResumeParameters $parameters = null): ResultInterface;
 
@@ -32,5 +35,5 @@ interface StatusApiInterface
 
     public function stop(?StopParameters $parameters = null): ResultInterface;
 
-    public function suspend(): ResultInterface;
+    public function suspend(?SuspendParameters $parameters = null): ResultInterface;
 }

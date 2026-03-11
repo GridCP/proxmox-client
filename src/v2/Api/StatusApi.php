@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api;
 
 use GridCP\Proxmox\Api\Parameters\RebootParameters;
+use GridCP\Proxmox\Api\Parameters\ResumeParameters;
+use GridCP\Proxmox\Api\Parameters\ResetParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Parameters\SuspendParameters;
@@ -71,11 +73,16 @@ class StatusApi implements StatusApiInterface
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/reset */
-    public function reset(bool $skiplock = false): ResultInterface
+    public function reset(?ResetParameters $parameters = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/reset', $this->node, $this->vmId);
-        if (true === $skiplock) {
-            $url .= '?' . http_build_query(['skiplock' => $skiplock]);
+
+        if (null !== $parameters) {
+            $query = $parameters->toArray();
+
+            if (false === empty($query)) {
+                $url .= '?' . http_build_query($query);
+            }
         }
 
         $response = $this->client->post($url);
@@ -87,15 +94,13 @@ class StatusApi implements StatusApiInterface
     public function resume(?ResumeParameters $parameters = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/resume', $this->node, $this->vmId);
-        $params = [];
-        if (true === $nocheck) {
-            $params['nocheck'] = $nocheck;
-        }
-        if (true === $skiplock) {
-            $params['skiplock'] = $skiplock;
-        }
-        if (false === empty($params)) {
-            $url .= '?' . http_build_query($params);
+
+        if (null !== $parameters) {
+            $query = $parameters->toArray();
+
+            if (false === empty($query)) {
+                $url .= '?' . http_build_query($query);
+            }
         }
 
         $response = $this->post($url);

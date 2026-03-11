@@ -6,6 +6,8 @@ namespace GridCP\Proxmox\Tests\Api;
 
 use GridCP\Proxmox\Api\Parameters\MigrationType;
 use GridCP\Proxmox\Api\Parameters\RebootParameters;
+use GridCP\Proxmox\Api\Parameters\ResumeParameters;
+use GridCP\Proxmox\Api\Parameters\ResetParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Parameters\SuspendParameters;
@@ -109,7 +111,7 @@ class StatusApiTest extends TestCase
 
         $api = new StatusApi($client, 'nodeName', 100);
 
-        $parameters = new RebootParameters()
+        $parameters = (new RebootParameters())
             ->timeout(30);
 
         $actual = $api->reboot($parameters);
@@ -158,7 +160,11 @@ class StatusApiTest extends TestCase
             ->willReturn($response);
 
         $api = new StatusApi($client, 'nodeName', 100);
-        $actual = $api->reset(true);
+
+        $parameters = (new ResetParameters())
+            ->skipLock(true);
+
+        $actual = $api->reset($parameters);
 
         $this->assertInstanceOf(ResetResult::class, $actual);
     }
@@ -208,7 +214,10 @@ class StatusApiTest extends TestCase
             ->willReturn($response);
 
         $api = new StatusApi($apiClient, 'nodeName', 100);
-        $actual = $api->resume(true, true);
+        $parameters = new ResumeParameters()
+            ->noCheck(true)
+            ->skipLock(true);
+        $actual = $api->resume($parameters);
 
         $this->assertInstanceOf(ResumeResult::class, $actual);
     }
@@ -302,7 +311,7 @@ class StatusApiTest extends TestCase
             ->willReturn($response);
 
         $api = new StatusApi($client, 'nodeName', 100);
-        $parameters = new StartParameters()
+        $parameters = (new StartParameters())
             ->forceCpu('kvm64')
             ->machine('q35')
             ->migratedFrom('migratedfrom')
@@ -361,7 +370,7 @@ class StatusApiTest extends TestCase
             ->willReturn($response);
 
         $api = new StatusApi($apiClient, 'nodeName', 100);
-        $parameters = new StopParameters()
+        $parameters = (new StopParameters())
             ->keepActive(true)
             ->migratedFrom('migratedfrom')
             ->overruleShutdown(false)
@@ -416,7 +425,7 @@ class StatusApiTest extends TestCase
 
         $api = new StatusApi($apiClient, 'nodeName', 100);
 
-        $parameters = new SuspendParameters()
+        $parameters = (new SuspendParameters())
             ->skipLock(true)
             ->stateStorage('local-lvm')
             ->toDisk(false);
