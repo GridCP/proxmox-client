@@ -10,14 +10,4 @@ class StartResult implements ResultInterface
         public ?string $upid,
     ) {
     }
-
-    /**
-     * @param array{data: string} $result
-     */
-    public static function fromArray(array $result): self
-    {
-        return new self(
-            $result['data'] ?? null,
-        );
-    }
 }

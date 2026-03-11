@@ -56,6 +56,7 @@ class ResultConverter implements ResultConverterInterface
              * } $data
              */
             $data = json_decode($content, true);
+
             throw new \RuntimeException($data['message']);
         }
 
@@ -82,6 +83,19 @@ class ResultConverter implements ResultConverterInterface
              */
             $data = json_decode($content, true);
             throw new AuthenticationException($data['message']);
+        }
+
+        /* Forbidden */
+        if (403 === $response->getStatusCode()) {
+            /**
+             * @var array{
+             *     data: null,
+             *     message: string,
+             * } $data
+             */
+            $data = json_decode($content, true);
+
+            throw new \RuntimeException($data['message']);
         }
 
         $data = json_decode($content, true);
