@@ -84,7 +84,7 @@ class StatusApi implements StatusApiInterface
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/resume */
-    public function resume(bool $nocheck = false, bool $skiplock = false): ResultInterface
+    public function resume(?ResumeParameters $parameters = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/resume', $this->node, $this->vmId);
         $params = [];

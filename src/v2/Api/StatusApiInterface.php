@@ -19,7 +19,7 @@ interface StatusApiInterface
 
     public function reset(bool $skiplock = false): ResultInterface;
 
-    public function resume(bool $nocheck = false, bool $skiplock = false): ResultInterface;
+    public function resume(?ResumeParameters $parameters = null): ResultInterface;
 
     public function shoutdown(
         bool $forceStop = false,
