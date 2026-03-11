@@ -39,7 +39,7 @@ class ResetResultTest extends TestCase
 
         $json = json_encode([
             'data' => null,
-            'message' => "VM 101 not running\n",
+            'message' => 'VM 101 not running',
         ], JSON_THROW_ON_ERROR);
 
         $response = $this->createMock(ResponseInterface::class);
@@ -50,7 +50,7 @@ class ResetResultTest extends TestCase
         $response->method('getBody')->willReturn($stream);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("VM 101 not running\n");
+        $this->expectExceptionMessage('VM 101 not running');
 
         $converter->convert($response, ResetResult::class);
     }

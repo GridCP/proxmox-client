@@ -33,71 +33,39 @@ class ResultConverter implements ResultConverterInterface
         string $resultType,
         array $options = [],
     ): ResultInterface {
-        $content = $response->getBody()->getContents();
+        $statusCode = $response->getStatusCode();
 
         /* Not implemented */
-        if (501 === $response->getStatusCode()) {
-            /**
-             * @var array{
-             *     data: null,
-             *     message: string,
-             * } $data
-             */
-            $data = json_decode($content, true);
-            throw new \RuntimeException($data['message']);
+        if (501 === $statusCode) {
+            throw new \RuntimeException($this->resolveErrorMessage($response));
         }
 
         /* Internal server error */
-        if (500 === $response->getStatusCode()) {
-            /**
-             * @var array{
-             *     data: null,
-             *     message: string,
-             * } $data
-             */
-            $data = json_decode($content, true);
-
-            throw new \RuntimeException($data['message']);
+        if (500 === $statusCode) {
+            throw new \RuntimeException($this->resolveErrorMessage($response));
         }
 
         /* Bad request */
-        if (400 === $response->getStatusCode()) {
-            /**
-             * @var array{
-             *     data: null,
-             *     message: string,
-             *     errors: array<string, string>
-             * } $data
-             */
-            $data = json_decode($content, true);
-            throw new \RuntimeException($data['message']);
+        if (400 === $statusCode) {
+            throw new \RuntimeException($this->resolveErrorMessage($response));
         }
 
         /* Unauthorized */
-        if (401 == $response->getStatusCode()) {
-            /**
-             * @var array{
-             *     data: null,
-             *     message: string,
-             * } $data
-             */
-            $data = json_decode($content, true);
-            throw new AuthenticationException($data['message']);
+        if (401 == $statusCode) {
+            throw new AuthenticationException($this->resolveErrorMessage($response));
         }
 
         /* Forbidden */
-        if (403 === $response->getStatusCode()) {
-            /**
-             * @var array{
-             *     data: null,
-             *     message: string,
-             * } $data
-             */
-            $data = json_decode($content, true);
-
-            throw new \RuntimeException($data['message']);
+        if (403 === $statusCode) {
+            throw new \RuntimeException($this->resolveErrorMessage($response));
         }
 
+        /* Network is unreachable */
+        if (595 === $statusCode) {
+            throw new \RuntimeException($this->resolveErrorMessage($response));
+        }
+
+        $content = $response->getBody()->getContents();
         $data = json_decode($content, true);
 
         return $this->normalize($resultType, $data);
@@ -105,13 +73,46 @@ class ResultConverter implements ResultConverterInterface
 
     private function normalize(string $resultType, array $data): ResultInterface
     {
-        $data = is_array($data['data'] ?? null) ? $data['data'] : [];
+        $data = $data['data'] ?? [];
+        $payload = $data;
 
-        $result = $this->serializer->denormalize($data, $resultType);
+        if (false === is_array($data)) {
+            $payload = [
+                'upid' => $data,
+            ];
+        }
+
+        $result = $this->serializer->denormalize($payload, $resultType);
         if (false === $result instanceof ResultInterface) {
             throw new \RuntimeException('Unsupported result type.');
         }
 
         return $result;
+    }
+
+    private function resolveErrorMessage(ResponseInterface $response): string
+    {
+        $content = $response->getBody()->getContents();
+
+        /**
+         * @var array{
+         *     data: null,
+         *     message: string,
+         *     errors?: array<string, string>
+         * } $data
+         */
+        $data = json_decode($content, true);
+        $message = $data['message'] ?? null;
+
+        if (is_string($message) && '' !== trim($message)) {
+            return trim($message);
+        }
+
+        $reasonPhrase = trim($response->getReasonPhrase());
+        if ('' !== $reasonPhrase) {
+            return $reasonPhrase;
+        }
+
+        return sprintf('HTTP %d error', $response->getStatusCode());
     }
 }
