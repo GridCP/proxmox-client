@@ -7,7 +7,7 @@ namespace GridCP\Proxmox\Api;
 use GridCP\Proxmox\Api\Parameters\RebootParameters;
 use GridCP\Proxmox\Api\Parameters\ResumeParameters;
 use GridCP\Proxmox\Api\Parameters\ResetParameters;
-use GridCP\Proxmox\Api\Parameters\ShoutdownParameters;
+use GridCP\Proxmox\Api\Parameters\ShutdownParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Parameters\SuspendParameters;
@@ -19,7 +19,7 @@ use GridCP\Proxmox\Result\ResultConverter;
 use GridCP\Proxmox\Result\ResultConverterInterface;
 use GridCP\Proxmox\Result\ResultInterface;
 use GridCP\Proxmox\Result\ResumeResult;
-use GridCP\Proxmox\Result\ShoutdownResult;
+use GridCP\Proxmox\Result\ShutdownResult;
 use GridCP\Proxmox\Result\StartResult;
 use GridCP\Proxmox\Result\StatusResult;
 use GridCP\Proxmox\Result\StopResult;
@@ -110,7 +110,7 @@ class StatusApi implements StatusApiInterface
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/shutdown */
-    public function shoutdown(?ShoutdownParameters $parameters = null): ResultInterface
+    public function shutdown(?ShutdownParameters $parameters = null): ResultInterface
     {
         $url = sprintf('/api2/json/nodes/%s/qemu/%s/status/shutdown', $this->node, $this->vmId);
 
@@ -124,7 +124,7 @@ class StatusApi implements StatusApiInterface
 
         $response = $this->post($url);
 
-        return $this->resultConverter->convert($response, ShoutdownResult::class);
+        return $this->resultConverter->convert($response, ShutdownResult::class);
     }
 
     /** @see https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/status/start */

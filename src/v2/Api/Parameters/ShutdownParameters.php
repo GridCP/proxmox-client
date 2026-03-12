@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Api\Parameters;
 
-final class ShoutdownParameters implements ParametersInterface
+final class ShutdownParameters implements ParametersInterface
 {
     /**
      * @param array<string, scalar> $parameters
