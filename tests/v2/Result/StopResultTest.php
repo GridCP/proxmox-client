@@ -36,4 +36,27 @@ class StopResultTest extends TestCase
             $result->upid,
         );
     }
+
+    public function testOnVmNotRunningErrorResponse(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('VM 100 not running');
+
+        $converter = new ResultConverter();
+
+        $json = json_encode([
+            'data' => null,
+            'message' => 'VM 100 not running',
+        ], JSON_THROW_ON_ERROR);
+
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('getContents')->willReturn($json);
+
+        $response->method('getStatusCode')->willReturn(500);
+        $response->method('getReasonPhrase')->willReturn('VM 100 not running');
+        $response->method('getBody')->willReturn($stream);
+
+        $converter->convert($response, StopResult::class);
+    }
 }
