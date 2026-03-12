@@ -8,6 +8,7 @@ use GridCP\Proxmox\Api\Parameters\MigrationType;
 use GridCP\Proxmox\Api\Parameters\RebootParameters;
 use GridCP\Proxmox\Api\Parameters\ResumeParameters;
 use GridCP\Proxmox\Api\Parameters\ResetParameters;
+use GridCP\Proxmox\Api\Parameters\ShoutdownParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Parameters\SuspendParameters;
@@ -267,7 +268,12 @@ class StatusApiTest extends TestCase
             ->willReturn($response);
 
         $api = new StatusApi($apiClient, 'nodeName', 100);
-        $actual = $api->shoutdown(true, true, true, 250);
+        $parameters = new ShoutdownParameters()
+            ->forceStop(true)
+            ->keepActive(true)
+            ->skipLock(true)
+            ->timeout(250);
+        $actual = $api->shoutdown($parameters);
 
         $this->assertInstanceOf(ShoutdownResult::class, $actual);
     }

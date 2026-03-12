@@ -7,6 +7,7 @@ namespace GridCP\Proxmox\Api;
 use GridCP\Proxmox\Api\Parameters\RebootParameters;
 use GridCP\Proxmox\Api\Parameters\ResetParameters;
 use GridCP\Proxmox\Api\Parameters\ResumeParameters;
+use GridCP\Proxmox\Api\Parameters\ShoutdownParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Parameters\SuspendParameters;
@@ -24,12 +25,7 @@ interface StatusApiInterface
 
     public function resume(?ResumeParameters $parameters = null): ResultInterface;
 
-    public function shoutdown(
-        bool $forceStop = false,
-        bool $keepActive = false,
-        bool $skiplock = false,
-        ?int $timeout = null,
-    ): ResultInterface;
+    public function shoutdown(?ShoutdownParameters $parameters = null): ResultInterface;
 
     public function start(?StartParameters $parameters = null): ResultInterface;
 
