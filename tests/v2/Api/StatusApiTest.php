@@ -8,7 +8,7 @@ use GridCP\Proxmox\Api\Parameters\MigrationType;
 use GridCP\Proxmox\Api\Parameters\RebootParameters;
 use GridCP\Proxmox\Api\Parameters\ResumeParameters;
 use GridCP\Proxmox\Api\Parameters\ResetParameters;
-use GridCP\Proxmox\Api\Parameters\ShoutdownParameters;
+use GridCP\Proxmox\Api\Parameters\ShutdownParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
 use GridCP\Proxmox\Api\Parameters\SuspendParameters;
@@ -18,7 +18,7 @@ use GridCP\Proxmox\Result\CurrentResult;
 use GridCP\Proxmox\Result\RebootResult;
 use GridCP\Proxmox\Result\ResetResult;
 use GridCP\Proxmox\Result\ResumeResult;
-use GridCP\Proxmox\Result\ShoutdownResult;
+use GridCP\Proxmox\Result\ShutdownResult;
 use GridCP\Proxmox\Result\StartResult;
 use GridCP\Proxmox\Result\StatusResult;
 use GridCP\Proxmox\Result\StopResult;
@@ -243,9 +243,9 @@ class StatusApiTest extends TestCase
             ->willReturn($response);
 
         $api = new StatusApi($apiClient, 'nodeName', 100);
-        $actual = $api->shoutdown();
+        $actual = $api->shutdown();
 
-        $this->assertInstanceOf(ShoutdownResult::class, $actual);
+        $this->assertInstanceOf(ShutdownResult::class, $actual);
     }
 
     public function testShutdownWithParameters(): void
@@ -268,14 +268,14 @@ class StatusApiTest extends TestCase
             ->willReturn($response);
 
         $api = new StatusApi($apiClient, 'nodeName', 100);
-        $parameters = new ShoutdownParameters()
+        $parameters = new ShutdownParameters()
             ->forceStop(true)
             ->keepActive(true)
             ->skipLock(true)
             ->timeout(250);
-        $actual = $api->shoutdown($parameters);
+        $actual = $api->shutdown($parameters);
 
-        $this->assertInstanceOf(ShoutdownResult::class, $actual);
+        $this->assertInstanceOf(ShutdownResult::class, $actual);
     }
 
     public function testStart(): void

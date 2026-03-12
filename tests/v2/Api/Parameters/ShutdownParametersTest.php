@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Tests\Api\Parameters;
 
-use GridCP\Proxmox\Api\Parameters\ShoutdownParameters;
+use GridCP\Proxmox\Api\Parameters\ShutdownParameters;
 use PHPUnit\Framework\TestCase;
 
-class ShoutdownParametersTest extends TestCase
+class ShutdownParametersTest extends TestCase
 {
     public function testWithAllMethods(): void
     {
-        $parameters = (new ShoutdownParameters())
+        $parameters = new ShutdownParameters()
             ->forceStop(true)
             ->keepActive(true)
             ->skipLock(true)
