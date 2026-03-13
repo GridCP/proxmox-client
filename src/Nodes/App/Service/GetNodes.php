@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace GridCP\Proxmox_Client\Nodes\App\Service;
 
 use GridCP\Proxmox_Client\Commons\Application\Helpers\GFunctions;
@@ -12,47 +14,49 @@ use GridCP\Proxmox_Client\Nodes\Domain\Responses\NodeResponse;
 use GridCP\Proxmox_Client\Nodes\Domain\Responses\NodesResponse;
 use GuzzleHttp\Exception\GuzzleException;
 
-
 final class GetNodes extends GClientBase
 {
     use GFunctions;
-
-
 
     public function __construct(Connection $connection, CookiesPVE $cookiesPVE)
     {
         parent::__construct($connection, $cookiesPVE);
     }
 
-
-    public function __invoke():?NodesResponse
+    public function __invoke(): ?NodesResponse
     {
         try {
-            $result = $this->Get("nodes", []);
+            $result = $this->Get('nodes');
+
             return new NodesResponse(...array_map($this->toResponse(), $result));
-        }catch(GuzzleException $ex){
-            if ($ex->getCode() === 401) throw new AuthFailedException();
-            if ($ex->getCode() === 0) throw new HostUnreachableException();
+        } catch (GuzzleException $ex) {
+            if (401 === $ex->getCode()) {
+                throw new AuthFailedException();
+            }
+            if (0 === $ex->getCode()) {
+                throw new HostUnreachableException();
+            }
         }
-        return  null;
+
+        return null;
     }
 
-    public function toResponse():callable
+    public function toResponse(): callable
     {
-        return static fn($result): NodeResponse => new NodeResponse(
-            $result['status'],
-            $result['level'],
-            $result['id'],
-            $result['ssl_fingerprint'],
-            $result['maxmem'],
-            $result['disk'],
-            $result['uptime'],
+        return static fn ($result): NodeResponse => new NodeResponse(
+            $result['cpu'],
             $result['mem'],
             $result['node'],
-            $result['cpu'],
-            $result['maxcpu'],
-            $result['type'],
             $result['maxdisk'],
+            $result['maxmem'],
+            $result['level'],
+            $result['maxcpu'],
+            $result['id'],
+            $result['type'],
+            $result['uptime'],
+            $result['status'],
+            $result['disk'],
+            $result['ssl_fingerprint'],
         );
     }
 }
