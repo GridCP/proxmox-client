@@ -150,7 +150,7 @@ class ProxmoxApiClient /* implements HttpMethodsClientInterface */
         return $this->httpClientBuilder;
     }
 
-    public function nodes(string $node): NodeApi
+    public function nodes(?string $node = null): NodeApi
     {
         return new NodeApi($this, $node);
     }

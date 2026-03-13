@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -22,6 +23,7 @@ class ResultConverter implements ResultConverterInterface
         $nameConverter = new MetadataAwareNameConverter($classMetadataFactory);
 
         $normalizers = [
+            new ArrayDenormalizer(),
             new ObjectNormalizer($classMetadataFactory, $nameConverter),
         ];
 
@@ -32,7 +34,7 @@ class ResultConverter implements ResultConverterInterface
         ResponseInterface $response,
         string $resultType,
         array $options = [],
-    ): ResultInterface {
+    ): ResultInterface|array {
         $statusCode = $response->getStatusCode();
 
         /* Not implemented */
@@ -71,7 +73,7 @@ class ResultConverter implements ResultConverterInterface
         return $this->normalize($resultType, $data);
     }
 
-    private function normalize(string $resultType, array $data): ResultInterface
+    private function normalize(string $resultType, array $data): ResultInterface|array
     {
         $data = $data['data'] ?? [];
         $payload = $data;
@@ -82,12 +84,7 @@ class ResultConverter implements ResultConverterInterface
             ];
         }
 
-        $result = $this->serializer->denormalize($payload, $resultType);
-        if (false === $result instanceof ResultInterface) {
-            throw new \RuntimeException('Unsupported result type.');
-        }
-
-        return $result;
+        return $this->serializer->denormalize($payload, $resultType);
     }
 
     private function resolveErrorMessage(ResponseInterface $response): string

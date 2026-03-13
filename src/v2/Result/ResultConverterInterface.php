@@ -8,5 +8,9 @@ use Psr\Http\Message\ResponseInterface;
 
 interface ResultConverterInterface
 {
-    public function convert(ResponseInterface $response, string $resultType, array $options = []): ResultInterface;
+    public function convert(
+        ResponseInterface $response,
+        string $resultType,
+        array $options = [],
+    ): ResultInterface|array;
 }

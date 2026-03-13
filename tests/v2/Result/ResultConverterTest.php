@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Tests\Result;
 
 use GridCP\Proxmox\Exception\AuthenticationException;
+use GridCP\Proxmox\Result\NodeResult;
 use GridCP\Proxmox\Result\RebootResult;
 use GridCP\Proxmox\Result\ResultConverter;
 use GridCP\Proxmox\Result\ResumeResult;
@@ -126,6 +127,52 @@ class ResultConverterTest extends TestCase
         $response = $this->createResponse(595, '', 'Network is unreachable');
 
         $converter->convert($response, ResumeResult::class);
+    }
+
+    public function testConvertNodesResponseToTypedCollection(): void
+    {
+        $converter = new ResultConverter();
+        $response = $this->createResponse(
+            200,
+            json_encode([
+                'data' => [
+                    [
+                        'cpu' => 0.00133071625802588,
+                        'mem' => 3104186368,
+                        'node' => 'ns2202',
+                        'maxdisk' => 64183046144,
+                        'maxmem' => 134954295296,
+                        'level' => '',
+                        'maxcpu' => 32,
+                        'id' => 'node/ns2202',
+                        'type' => 'node',
+                        'uptime' => 181149,
+                        'status' => 'online',
+                        'disk' => 5043159040,
+                        'ssl_fingerprint' => '38:B7:74:83:C7:66:21:D8:77:62:68:A2:8B:79:04:26:FC:C6:40:FF:7F:F3:4E:4A:C1:A4:AF:B7:0A:FB:03:9E',
+                    ],
+                    [
+                        'cpu' => 0.00133071625802588,
+                        'mem' => 3104186368,
+                        'node' => 'ns2203',
+                        'maxdisk' => 64183046144,
+                        'maxmem' => 134954295296,
+                        'level' => '',
+                        'maxcpu' => 32,
+                        'id' => 'node/ns2203',
+                        'type' => 'node',
+                        'uptime' => 181149,
+                        'status' => 'online',
+                        'disk' => 5043159040,
+                        'ssl_fingerprint' => '38:B7:74:83:C7:66:21:D8:77:62:68:A2:8B:79:04:26:FC:C6:40:FF:7F:F3:4E:4A:C1:A4:AF:B7:0A:FB:03:9E',
+                    ],
+                ],
+            ]),
+        );
+
+        $result = $converter->convert($response, NodeResult::class . '[]');
+
+        $this->assertCount(2, $result);
     }
 
     private function createResponse(int $statusCode, string $payload, string $reasonPhrase = ''): ResponseInterface
