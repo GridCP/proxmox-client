@@ -1,14 +1,26 @@
 <?php
+
 declare(strict_types=1);
+
 namespace GridCP\Proxmox_Client\Nodes\Domain\Responses;
 
 final readonly class NodeResponse
 {
-
-    public function __construct(private string $status,private string $level, private string $id, private string $ssl_fingerprint,
-                                private int $maxmem, private int $disk, private int $uptime, private int $mem, private string $node,
-                                private float $cpu, private int $maxcpu, private string $type, private int $maxdisk){
-
+    public function __construct(
+        private float $cpu,
+        private int $mem,
+        private string $node,
+        private int $maxdisk,
+        private int $maxmem,
+        private string $level,
+        private int $maxcpu,
+        private string $id,
+        private string $type,
+        private int $uptime,
+        private string $status,
+        private int $disk,
+        private string $ssl_fingerprint,
+    ) {
     }
 
     public function getStatus(): string
@@ -75,7 +87,4 @@ final readonly class NodeResponse
     {
         return $this->maxdisk;
     }
-
-
-
 }
