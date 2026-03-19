@@ -47,7 +47,7 @@ class StorageApi
      */
     public function status(): ResultInterface
     {
-        $url = sprintf('/api2/json/nodes/%s/storage/%s/status', $this->node, $this->storage);
+        $url = sprintf('/api2/json/nodes/%s/storage/%s/status', $this->node, $this->requireStorage());
 
         $response = $this->client->get($url);
 
@@ -55,5 +55,14 @@ class StorageApi
         $result = $this->resultConverter->convert($response, StatusResult::class);
 
         return $result;
+    }
+
+    private function requireStorage(): string
+    {
+        if (null === $this->storage || '' === $this->storage) {
+            throw new \LogicException('Storage name is required for storage-scoped endpoints');
+        }
+
+        return $this->storage;
     }
 }

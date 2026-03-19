@@ -36,7 +36,7 @@ class NodeApi
         return new QemuApi($this->client, $this->requireNode(), $vmid);
     }
 
-    public function storage(string $storage): StorageApi
+    public function storage(?string $storage = null): StorageApi
     {
         return new StorageApi($this->client, $this->requireNode(), $storage);
     }
