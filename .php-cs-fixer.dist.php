@@ -1,11 +1,11 @@
 <?php
 
-$finder = (new PhpCsFixer\Finder())
+$finder = new PhpCsFixer\Finder()
     ->in(__DIR__ . '/src')
     ->exclude('var')
     ->exclude('vendor');
 
-return (new PhpCsFixer\Config())
+return new PhpCsFixer\Config()
     ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,
