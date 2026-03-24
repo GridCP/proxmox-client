@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Tests\Api;
 
 use GridCP\Proxmox\Api\NodeApi;
+use GridCP\Proxmox\Api\StorageApi;
 use GridCP\Proxmox\ProxmoxApiClient;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -69,6 +70,27 @@ class NodeApiTest extends TestCase
         $this->expectExceptionMessage('Node name is required for node-scoped endpoints');
 
         $api->qemu(100);
+    }
+
+    public function testStorage(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $api = new NodeApi($client);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Node name is required for node-scoped endpoints');
+
+        $api->storage('localStorage');
+    }
+
+    public function testStorageInstantiation(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $api = new NodeApi($client, 'nodeName');
+
+        $actual = $api->storage('localStorage');
+
+        $this->assertInstanceOf(StorageApi::class, $actual);
     }
 
     public function testTasksRequiresNode()

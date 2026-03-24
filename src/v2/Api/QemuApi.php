@@ -85,6 +85,16 @@ class QemuApi
         return new StatusApi($this->client, $this->node, $this->vmId);
     }
 
+    public function config(): ConfigApi
+    {
+        return new ConfigApi($this->client, $this->node, $this->vmId);
+    }
+
+    public function resize(): ResizeApi
+    {
+        return new ResizeApi($this->client, $this->node, $this->vmId);
+    }
+
     public function delete(string $url): ResponseInterface
     {
         return $this->client->delete($url);
