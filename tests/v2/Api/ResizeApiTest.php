@@ -30,12 +30,12 @@ class ResizeApiTest extends TestCase
 
         $client->expects($this->once())
             ->method('put')
-            ->with('/api2/json/nodes/nodeName/qemu/101/resize?disk=scsi0&size=%2B10G&digest=abc123&skiplock=1')
+            ->with('/api2/json/nodes/nodeName/qemu/101/resize?disk=scsi0&size=%2B1M&digest=abc123&skiplock=1')
             ->willReturn($response);
 
         $parameters = new ResizeParameters()
-            ->disk('scsi0')
-            ->size('+10G')
+            ->disk(0, 'scsi')
+            ->size('+1M')
             ->digest('abc123')
             ->skipLock(true);
 
@@ -43,6 +43,9 @@ class ResizeApiTest extends TestCase
         $actual = $api->resize($parameters);
 
         $this->assertInstanceOf(ResizeResult::class, $actual);
-        $this->assertSame('UPID:nodeName:XXXXXXXX:XXXXXXXX:XXXXXXXX:resize:101:root@pam!gridcp:', $actual->upid);
+        $this->assertSame(
+            'UPID:nodeName:XXXXXXXX:XXXXXXXX:XXXXXXXX:resize:101:root@pam!gridcp:',
+            $actual->upid,
+        );
     }
 }

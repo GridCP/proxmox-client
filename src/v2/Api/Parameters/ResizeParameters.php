@@ -13,9 +13,9 @@ final class ResizeParameters implements ParametersInterface
     {
     }
 
-    public function disk(string $disk): self
+    public function disk(int $index, string $disk): self
     {
-        $this->parameters['disk'] = $disk;
+        $this->parameters['disk'] = sprintf('%s%d', $disk, $index);
 
         return $this;
     }
