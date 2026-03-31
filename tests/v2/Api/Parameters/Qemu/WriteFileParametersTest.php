@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Tests\Api\Parameters\Qemu;
 
-use GridCP\Proxmox\Api\Parameters\Qemu\WriteFileParameters;
+use GridCP\Proxmox\Api\Parameters\Qemu\Agent\WriteFileParameters;
 use PHPUnit\Framework\TestCase;
 
 class WriteFileParametersTest extends TestCase
