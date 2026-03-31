@@ -6,11 +6,11 @@ namespace GridCP\Proxmox\Api;
 
 use GridCP\Proxmox\Api\Parameters\ConfigureParameters;
 use GridCP\Proxmox\ProxmoxApiClient;
-use GridCP\Proxmox\Result\ConfigResult;
-use GridCP\Proxmox\Result\Qemu\VirtualMachineConfigAsync;
-use GridCP\Proxmox\Result\ResultConverter;
-use GridCP\Proxmox\Result\ResultConverterInterface;
-use GridCP\Proxmox\Result\ResultInterface;
+use GridCP\Proxmox\Result\Result\ConfigResult;
+use GridCP\Proxmox\Result\Result\Qemu\VirtualMachineConfigAsync;
+use GridCP\Proxmox\Result\Result\ResultConverter;
+use GridCP\Proxmox\Result\Result\ResultConverterInterface;
+use GridCP\Proxmox\Result\Result\ResultInterface;
 
 /**
  * @see https://pve.proxmox.com/pve-docs/api-viewer/#/nodes/{node}/qemu/{vmid}/config
@@ -18,9 +18,9 @@ use GridCP\Proxmox\Result\ResultInterface;
 class ConfigApi
 {
     public function __construct(
-        private readonly ProxmoxApiClient         $client,
-        private readonly string                   $node,
-        private readonly int                      $vmId,
+        private readonly ProxmoxApiClient $client,
+        private readonly string $node,
+        private readonly int $vmId,
         private readonly ResultConverterInterface $resultConverter = new ResultConverter(),
     ) {
     }

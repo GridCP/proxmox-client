@@ -9,7 +9,9 @@ return new PhpCsFixer\Config()
     ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,
-        'concat_space' => ['spacing' => 'one'],
+        'concat_space' => [
+            'spacing' => 'one'
+        ],
         'no_unused_imports' => true,
         'declare_strict_types' => true,
         'method_argument_space' => [
