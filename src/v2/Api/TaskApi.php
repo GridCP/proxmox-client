@@ -6,6 +6,8 @@ namespace GridCP\Proxmox\Api;
 
 use GridCP\Proxmox\ProxmoxApiClient;
 use GridCP\Proxmox\Result\ResultConverter;
+use GridCP\Proxmox\Result\ResultConverterInterface;
+use GridCP\Proxmox\Result\ResultInterface;
 use GridCP\Proxmox\Result\TaskResult;
 
 class TaskApi
@@ -14,23 +16,19 @@ class TaskApi
         private ProxmoxApiClient $client,
         private string $node,
         private string $upid,
+        private readonly ResultConverterInterface $resultConverter = new ResultConverter(),
     ) {
     }
 
     /**
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function status(): TaskResult
+    public function status(): ResultInterface
     {
-        $response = $this->client->request('GET', '/api2/json/nodes/{node}/tasks/{upid}/status', [
-            'vars' => [
-                'node' => $this->node,
-                'upid' => $this->upid,
-            ],
-        ]);
+        $url = sprintf('/api2/json/nodes/%s/tasks/%s/status', $this->node, $this->upid);
 
-        $converter = new ResultConverter();
+        $response = $this->client->get($url);
 
-        return $converter->convert($response, TaskResult::class);
+        return $this->resultConverter->convert($response, TaskResult::class);
     }
 }

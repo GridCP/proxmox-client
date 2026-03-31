@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api;
 
 use GridCP\Proxmox\Api\Parameters\RebootParameters;
-use GridCP\Proxmox\Api\Parameters\ResumeParameters;
 use GridCP\Proxmox\Api\Parameters\ResetParameters;
+use GridCP\Proxmox\Api\Parameters\ResumeParameters;
 use GridCP\Proxmox\Api\Parameters\ShutdownParameters;
 use GridCP\Proxmox\Api\Parameters\StartParameters;
 use GridCP\Proxmox\Api\Parameters\StopParameters;
