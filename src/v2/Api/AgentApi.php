@@ -11,6 +11,7 @@ use GridCP\Proxmox\ProxmoxApiClient;
 use GridCP\Proxmox\Result\Qemu\ExecResult;
 use GridCP\Proxmox\Result\Qemu\ExecStatusResult;
 use GridCP\Proxmox\Result\Qemu\FileWriteResult;
+use GridCP\Proxmox\Result\Qemu\PingResult;
 use GridCP\Proxmox\Result\ResultConverter;
 use GridCP\Proxmox\Result\ResultConverterInterface;
 use GridCP\Proxmox\Result\ResultInterface;
@@ -71,5 +72,14 @@ class AgentApi
         ], $body);
 
         return $this->resultConverter->convert($response, FileWriteResult::class);
+    }
+
+    public function ping(): ResultInterface
+    {
+        $url = sprintf('/api2/json/nodes/%s/qemu/%s/agent/ping', $this->node, $this->vmId);
+
+        $response = $this->client->post($url);
+
+        return $this->resultConverter->convert($response, PingResult::class);
     }
 }
