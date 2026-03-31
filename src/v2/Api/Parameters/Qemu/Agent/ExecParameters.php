@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace GridCP\Proxmox\Api\Parameters\Qemu;
+namespace GridCP\Proxmox\Api\Parameters\Qemu\Agent;
 
 use GridCP\Proxmox\Api\Parameters\ParametersInterface;
 
-final class WriteFileParameters implements ParametersInterface
+class ExecParameters implements ParametersInterface
 {
     /**
      * @param array<string, scalar> $parameters
@@ -15,23 +15,16 @@ final class WriteFileParameters implements ParametersInterface
     {
     }
 
-    public function content(string $content): self
+    public function command(string $command): self
     {
-        $this->parameters['content'] = $content;
+        $this->parameters['command'] = $command;
 
         return $this;
     }
 
-    public function file(string $file): self
+    public function inputData(string $inputData): self
     {
-        $this->parameters['file'] = $file;
-
-        return $this;
-    }
-
-    public function encode(string $encode): self
-    {
-        $this->parameters['encode'] = $encode;
+        $this->parameters['input-data'] = $inputData;
 
         return $this;
     }
