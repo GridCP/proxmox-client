@@ -13,9 +13,11 @@ final readonly class TaskResult implements ResultInterface
         public ?string $id,
         public ?string $user,
         public ?string $exitstatus,
+        /** @var 'running'|'stopped' */
         public ?string $status,
         public ?int $pstart,
         public ?int $starttime,
+        /** @var 'qmdestroy' */
         public ?string $type,
         public ?string $upid,
         public ?int $pid,
@@ -23,37 +25,8 @@ final readonly class TaskResult implements ResultInterface
     ) {
     }
 
-    /**
-     * @param array{
-     *   data: array{
-     *     id: string,
-     *     user: string,
-     *     exitstatus: string,
-     *     status: 'running'|'stopped',
-     *     pid: int,
-     *     node: string,
-     *     upid: string,
-     *     type: string,
-     *     starttime: int,
-     *     pstart: int,
-     *   }
-     * } $result
-     */
-    public static function fromArray(array $result): self
+    public function isStopped(): bool
     {
-        $data = $result['data'] ?? [];
-
-        return new self(
-            $data['id'] ?? null,
-            $data['user'] ?? null,
-            $data['exitstatus'] ?? null,
-            $data['status'] ?? null,
-            $data['pstart'] ?? null,
-            $data['starttime'] ?? null,
-            $data['type'] ?? null,
-            $data['upid'] ?? null,
-            $data['pid'] ?? null,
-            $data['node'] ?? null,
-        );
+        return self::STATUS_STOPPED === $this->status;
     }
 }
