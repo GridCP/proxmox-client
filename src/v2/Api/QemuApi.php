@@ -93,6 +93,11 @@ class QemuApi
         return $this->resultConverter->convert($response, DestroyResult::class);
     }
 
+    public function agent(): AgentApi
+    {
+        return new AgentApi($this->client, $this->node, $this->vmId);
+    }
+
     public function status(): StatusApi
     {
         return new StatusApi($this->client, $this->node, $this->vmId);
