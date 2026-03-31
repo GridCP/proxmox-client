@@ -6,9 +6,11 @@ namespace GridCP\Proxmox\Tests\Api;
 
 use GridCP\Proxmox\Api\AgentApi;
 use GridCP\Proxmox\Api\Parameters\Qemu\Agent\ExecParameters;
+use GridCP\Proxmox\Api\Parameters\Qemu\Agent\ExecStatusParameters;
 use GridCP\Proxmox\Api\Parameters\Qemu\Agent\WriteFileParameters;
 use GridCP\Proxmox\ProxmoxApiClient;
 use GridCP\Proxmox\Result\Qemu\ExecResult;
+use GridCP\Proxmox\Result\Qemu\ExecStatusResult;
 use GridCP\Proxmox\Result\Qemu\FileWriteResult;
 use GridCP\Proxmox\Result\ResultConverterInterface;
 use PHPUnit\Framework\TestCase;
@@ -77,5 +79,41 @@ class AgentApiTest extends TestCase
 
         $this->assertInstanceOf(FileWriteResult::class, $actual);
         $this->assertSame(null, $actual->result);
+    }
+
+    public function testExecStatusWithParameters(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $converter = $this->createMock(ResultConverterInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
+
+        $client->expects($this->once())
+            ->method('get')
+            ->with('/api2/json/nodes/nodeName/qemu/101/agent/exec-status?pid=7421')
+            ->willReturn($response);
+
+        $execStatusResult = new ExecStatusResult(
+            false,
+            null,
+            null,
+            1,
+            'done',
+            false,
+            null,
+        );
+        $converter->expects($this->once())
+            ->method('convert')
+            ->with($response, ExecStatusResult::class)
+            ->willReturn($execStatusResult);
+
+        $parameters = new ExecStatusParameters()
+            ->pid(7421);
+
+        $api = new AgentApi($client, 'nodeName', 101, $converter);
+        $actual = $api->execStatus($parameters);
+
+        $this->assertInstanceOf(ExecStatusResult::class, $actual);
+        $this->assertTrue($actual->isSuccess());
+        $this->assertFalse($actual->isError());
     }
 }

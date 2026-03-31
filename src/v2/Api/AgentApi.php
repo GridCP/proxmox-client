@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace GridCP\Proxmox\Api;
 
 use GridCP\Proxmox\Api\Parameters\Qemu\Agent\ExecParameters;
+use GridCP\Proxmox\Api\Parameters\Qemu\Agent\ExecStatusParameters;
 use GridCP\Proxmox\Api\Parameters\Qemu\Agent\WriteFileParameters;
 use GridCP\Proxmox\ProxmoxApiClient;
 use GridCP\Proxmox\Result\Qemu\ExecResult;
+use GridCP\Proxmox\Result\Qemu\ExecStatusResult;
 use GridCP\Proxmox\Result\Qemu\FileWriteResult;
 use GridCP\Proxmox\Result\ResultConverter;
 use GridCP\Proxmox\Result\ResultConverterInterface;
