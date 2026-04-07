@@ -6,6 +6,7 @@ namespace GridCP\Proxmox\Api;
 
 use GridCP\Proxmox\ProxmoxApiClient;
 use GridCP\Proxmox\Result\Capabilities\CpuResult;
+use GridCP\Proxmox\Result\Capabilities\MachineResult;
 use GridCP\Proxmox\Result\ResultConverter;
 use GridCP\Proxmox\Result\ResultConverterInterface;
 
@@ -50,17 +51,14 @@ class CapabilitiesApi
     /**
      * @see https://pve.proxmox.com/pve-docs/api-viewer/#/nodes/{node}/capabilities/qemu/machines
      *
-     * @return array<int, array<string, mixed>>
+     * @return MachineResult[]
      */
     public function machines(): array
     {
         $url = sprintf('/api2/json/nodes/%s/capabilities/qemu/machines', $this->node);
         $response = $this->client->get($url);
 
-        /** @var array<int, array<string, mixed>> $result */
-        $result = $this->resultConverter->convert($response, 'array');
-
-        return $result;
+        return $this->resultConverter->convert($response, MachineResult::class . '[]');
     }
 
     /**
