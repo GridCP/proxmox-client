@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GridCP\Proxmox\Tests\Api;
 
+use GridCP\Proxmox\Api\CapabilitiesApi;
 use GridCP\Proxmox\Api\NodeApi;
 use GridCP\Proxmox\Api\StorageApi;
 use GridCP\Proxmox\ProxmoxApiClient;
@@ -91,6 +92,26 @@ class NodeApiTest extends TestCase
         $actual = $api->storage('localStorage');
 
         $this->assertInstanceOf(StorageApi::class, $actual);
+    }
+
+    public function testCapabilitiesRequiresNode(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $api = new NodeApi($client);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Node name is required for node-scoped endpoints');
+
+        $api->capabilities();
+    }
+
+    public function testCapabilitiesInstantiation(): void
+    {
+        $client = $this->createMock(ProxmoxApiClient::class);
+        $api = new NodeApi($client, 'nodeName');
+        $result = $api->capabilities();
+
+        $this->assertInstanceOf(CapabilitiesApi::class, $result);
     }
 
     public function testTasksRequiresNode()
